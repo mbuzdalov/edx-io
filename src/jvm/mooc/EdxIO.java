@@ -6,16 +6,16 @@ import java.nio.channels.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class IO implements Closeable {
+public class EdxIO implements Closeable {
     /**
-     * Creates a default instance of IO
+     * Creates a default instance of EdxIO
      * which reads input from "input.txt"
      * and writes output to "output.txt".
      *
-     * @return the new IO instance.
+     * @return the new EdxIO instance.
      */
-    public static IO create() {
-        return new IO("input.txt", "output.txt");
+    public static EdxIO create() {
+        return new EdxIO("input.txt", "output.txt");
     }
 
     /*-************************* Public high-level API for input *************************-*/
@@ -201,7 +201,7 @@ public class IO implements Closeable {
     private final byte[] numberBuffer = new byte[32];
     private final byte[] lineSeparatorChars = System.lineSeparator().getBytes();
 
-    private IO(String inputFileName, String outputFileName) {
+    private EdxIO(String inputFileName, String outputFileName) {
         try {
             File inputFile = new File(inputFileName);
             inputStream = new FileInputStream(inputFile);
