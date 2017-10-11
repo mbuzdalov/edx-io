@@ -6,6 +6,12 @@ import java.nio.channels.*;
 import java.nio.file.*;
 import java.util.*;
 
+/**
+ * This is a simple I/O library for JVM-based programming languages, such as Java, Scala and Kotlin,
+ * intended to be used in edX-based courses on programming taught by ITMO University.
+ *
+ * @author Maxim Buzdalov
+ */
 public class EdxIO implements Closeable {
     /**
      * Creates a default instance of EdxIO
@@ -16,6 +22,31 @@ public class EdxIO implements Closeable {
      */
     public static EdxIO create() {
         return new EdxIO("input.txt", "output.txt");
+    }
+
+    /**
+     * This is an abstract class for an entry point intended to be used from Scala.
+     *
+     * It has an abstract method {#receive(EdxIO)} for doing the real work when the EdxIO instance is created,
+     * and an implementation of public-static-void-main which creates an instance and delegates to {#receive(EdxIO)}.
+     */
+    public static abstract class Receiver {
+        /**
+         * This is an abstract method for doing the real work.
+         *
+         * @param io an instance of EdxIO for reading and writing.
+         */
+        protected abstract void receive(EdxIO io);
+
+        /**
+         * This is what will become the public-static-void-main
+         * when this class is extended by a Scala object containing the solution.
+         */
+        public final void main(String[] args) {
+            try (EdxIO io = EdxIO.create()) {
+                receive(io);
+            }
+        }
     }
 
     /*-************************* Public high-level API for input *************************-*/
