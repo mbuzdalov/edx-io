@@ -57,48 +57,96 @@ public class EdxIO implements Closeable {
      * This will:
      * <ul>
      * <li>skip all whitespace until the next non-whitespace symbol;</li>
-     * <li>remember the position of the first non-whitespace symbol;</li>
      * <li>try consuming as much non-whitespace symbols as needed to read an int;</li>
-     * <li>if done successfully, returns an int, otherwise rewinds the stream
-     *     to the remembered position and throws an exception.</li>
+     * <li>if done successfully, returns an int, otherwise leaves the stream at the position
+     *     which stopped correct parsing of an int and throws an exception.</li>
      * </ul>
      *
      * When the operation succeeds, the stream pointer for the input file points to the next
      * symbol after the last symbol of the consumed int value.
      *
      * When the operation fails, the stream pointer for the input file points to the first
-     * non-whitespace symbol which started a sequence that could not be interpreted as an int.
+     * symbol which made the symbol sequence not interpretable as an int.
      *
      * @return the int value which has just been read from the input file.
      */
     public int nextInt() {
-        return nextIntImpl(false, 0);
+        skipWhiteSpace();
+        boolean isNegative = false;
+        if (currentSymbol() == '-') {
+            isNegative = true;
+            ++inputPosition;
+        }
+        boolean hasDigits = false;
+        int value = 0;
+        while (true) {
+            byte next = currentSymbol();
+            if (next >= '0' && next <= '9') {
+                hasDigits = true;
+                ++inputPosition;
+                int add = next - '0';
+                if (nextIntImplIsSafe(value, add, isNegative)) {
+                    value = value * 10 + add;
+                } else {
+                    throw new NumberFormatException();
+                }
+            } else {
+                if (hasDigits) {
+                    return isNegative ? -value : value;
+                } else {
+                    throw new NumberFormatException();
+                }
+            }
+        }
     }
 
     /**
-     * Reads from the input file and returns the next int.
-     * On failure, returns the specified {@code valueOnFail}.
+     * Reads from the input file and returns the next long.
      *
      * This will:
      * <ul>
      * <li>skip all whitespace until the next non-whitespace symbol;</li>
-     * <li>remember the position of the first non-whitespace symbol;</li>
-     * <li>try consuming as much non-whitespace symbols as needed to read an int;</li>
-     * <li>if done successfully, returns an int, otherwise rewinds the stream
-     *     to the remembered position and returns the specified {@code valueOnFail}.</li>
+     * <li>try consuming as much non-whitespace symbols as needed to read a long;</li>
+     * <li>if done successfully, returns a long, otherwise leaves the stream at the position
+     *     which stopped correct parsing of an int and throws an exception.</li>
      * </ul>
      *
      * When the operation succeeds, the stream pointer for the input file points to the next
-     * symbol after the last symbol of the consumed int value.
+     * symbol after the last symbol of the consumed long value.
      *
      * When the operation fails, the stream pointer for the input file points to the first
-     * non-whitespace symbol which started a sequence that could not be interpreted as an int.
+     * symbol which made the symbol sequence not interpretable as a long.
      *
-     * @param valueOnFail the value to return on failure.
-     * @return the int value which has just been read from the input file, or {@code valueOnFail} on fail.
+     * @return the long value which has just been read from the input file.
      */
-    public int nextIntOr(int valueOnFail) {
-        return nextIntImpl(true, valueOnFail);
+    public long nextLong() {
+        skipWhiteSpace();
+        boolean isNegative = false;
+        if (currentSymbol() == '-') {
+            isNegative = true;
+            ++inputPosition;
+        }
+        boolean hasDigits = false;
+        long value = 0;
+        while (true) {
+            byte next = currentSymbol();
+            if (next >= '0' && next <= '9') {
+                hasDigits = true;
+                ++inputPosition;
+                int add = next - '0';
+                if (nextLongImplIsSafe(value, add, isNegative)) {
+                    value = value * 10 + add;
+                } else {
+                    throw new NumberFormatException();
+                }
+            } else {
+                if (hasDigits) {
+                    return isNegative ? -value : value;
+                } else {
+                    throw new NumberFormatException();
+                }
+            }
+        }
     }
 
     /*-************************* Public low-level API for input *************************-*/
@@ -136,27 +184,40 @@ public class EdxIO implements Closeable {
     /*-************************* Public high-level API for output *************************-*/
 
     /**
+     * Prints a newline sequence.
+     *
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
+     */
+    public EdxIO println() {
+        write(lineSeparatorChars, 0, lineSeparatorChars.length);
+        return this;
+    }
+
+    /**
      * Prints a character to the output file.
      * A '\n' char is converted to the native newline byte sequence.
      *
      * @param ch the character to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void print(char ch) {
+    public EdxIO print(char ch) {
         if (ch == '\n') {
-            printNewLine();
+            println();
         } else {
             write((byte) (ch));
         }
+        return this;
     }
 
     /**
      * Prints a character to the output file, and then puts a newline.
      *
      * @param ch the character to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void println(char ch) {
+    public EdxIO println(char ch) {
         write((byte) (ch));
-        printNewLine();
+        return println();
     }
 
     /**
@@ -164,11 +225,13 @@ public class EdxIO implements Closeable {
      * Every '\n' char is converted to the native newline byte sequence.
      *
      * @param s the string to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void print(String s) {
+    public EdxIO print(String s) {
         for (int i = 0, iMax = s.length(); i < iMax; ++i) {
             print(s.charAt(i));
         }
+        return this;
     }
 
     /**
@@ -176,22 +239,24 @@ public class EdxIO implements Closeable {
      * Every '\n' char is converted to the native newline byte sequence.
      *
      * @param s the string to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void println(String s) {
+    public EdxIO println(String s) {
         for (int i = 0, iMax = s.length(); i < iMax; ++i) {
             print(s.charAt(i));
         }
-        printNewLine();
+        return println();
     }
 
     /**
      * Prints an int to the output file.
      *
      * @param value the int to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void print(int value) {
+    public EdxIO print(int value) {
         if (value == Integer.MIN_VALUE) {
-            print("-2147483648");
+            return print("-2147483648");
         } else {
             if (value < 0) {
                 print('-');
@@ -199,6 +264,7 @@ public class EdxIO implements Closeable {
             }
             int pos = intToBuffer(value, numberBuffer.length);
             write(numberBuffer, pos, numberBuffer.length - pos);
+            return this;
         }
     }
 
@@ -206,20 +272,21 @@ public class EdxIO implements Closeable {
      * Prints an int to the output file, and then puts a newline.
      *
      * @param value the int to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void println(int value) {
-        print(value);
-        printNewLine();
+    public EdxIO println(int value) {
+        return print(value).println();
     }
 
     /**
      * Prints a long to the output file.
      *
      * @param value the long to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void print(long value) {
+    public EdxIO print(long value) {
         if (value == Long.MIN_VALUE) {
-            print("-9223372036854775808");
+            return print("-9223372036854775808");
         } else {
             if (value < 0) {
                 print('-');
@@ -235,6 +302,7 @@ public class EdxIO implements Closeable {
             }
             pos = intToBuffer((int) value, pos);
             write(numberBuffer, pos, numberBuffer.length - pos);
+            return this;
         }
     }
 
@@ -242,10 +310,10 @@ public class EdxIO implements Closeable {
      * Prints a long to the output file, and then puts a newline.
      *
      * @param value the long to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public void println(long value) {
-        print(value);
-        printNewLine();
+    public EdxIO println(long value) {
+        return print(value).println();
     }
 
     /*-************************* Fields and initialization *************************-*/
@@ -283,40 +351,6 @@ public class EdxIO implements Closeable {
 
     /*-************************* Implementation of nextInt *************************-*/
 
-    private int nextIntImpl(boolean hasValueOnFail, int valueOnFail) {
-        skipWhiteSpace();
-        int firstNonWhitespacePosition = inputPosition;
-        boolean isNegative = false;
-        if (currentSymbol() == '-') {
-            isNegative = true;
-            ++inputPosition;
-        }
-        boolean hasSymbols = false;
-        int value = 0;
-        while (true) {
-            byte next = currentSymbol();
-            if (next >= '0' && next <= '9') {
-                hasSymbols = true;
-                ++inputPosition;
-                int add = next - '0';
-                if (nextIntImplIsSafe(value, add, isNegative)) {
-                    value = value * 10 + add;
-                } else {
-                    inputPosition = firstNonWhitespacePosition;
-                    return nextIntImplThrow(hasValueOnFail, valueOnFail);
-                }
-            } else {
-                // not a number anymore
-                if (hasSymbols) {
-                    return isNegative ? -value : value;
-                } else {
-                    inputPosition = firstNonWhitespacePosition;
-                    return nextIntImplThrow(hasValueOnFail, valueOnFail);
-                }
-            }
-        }
-    }
-
     private boolean nextIntImplIsSafe(int value, int add, boolean isNegative) {
         if (value < 214748364) {
             return true;
@@ -327,12 +361,14 @@ public class EdxIO implements Closeable {
         return isNegative ? add <= 8 : add < 8;
     }
 
-    private int nextIntImplThrow(boolean hasValueOnFail, int valueOnFail) {
-        if (hasValueOnFail) {
-            return valueOnFail;
-        } else {
-            throw new NumberFormatException();
+    private boolean nextLongImplIsSafe(long value, int add, boolean isNegative) {
+        if (value < 922337203685477580L) {
+            return true;
         }
+        if (value > 922337203685477580L) {
+            return false;
+        }
+        return isNegative ? add <= 8 : add < 8;
     }
 
     /*-************************* Implementation of print *************************-*/
@@ -342,10 +378,6 @@ public class EdxIO implements Closeable {
         if (outputSize == outputBuffer.length) {
             flush();
         }
-    }
-
-    private void printNewLine() {
-        write(lineSeparatorChars, 0, lineSeparatorChars.length);
     }
 
     private void flush() {
@@ -361,6 +393,9 @@ public class EdxIO implements Closeable {
         if (outputSize + length <= outputBuffer.length) {
             System.arraycopy(buffer, offset, outputBuffer, outputSize, length);
             outputSize += length;
+            if (outputSize == outputBuffer.length) {
+                flush();
+            }
         } else {
             flush();
             try {

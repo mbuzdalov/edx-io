@@ -5,7 +5,7 @@ function run_java_one() {
     javac $1.java -d classes
     echo "        $1.java"
     /usr/bin/time -f "          times:    %U/%S/%M" java -Xmx256M -cp classes $1 && \
-        echo "          finished: OK" || echo "          finished: FAIL"
+        echo "          finished: OK" || echo "          finished: FAILED"
     if cmp -s answer.txt output.txt; then
         echo "          check:    OK"
     else
@@ -26,7 +26,7 @@ function run_java() {
 javac Generator.java
 java Generator
 
-for TEST in 01-reading-ints 02-reading-ints-or; do
+for TEST in 0*; do
     pushd $TEST > /dev/null
     echo "Running test $TEST"
     run_java

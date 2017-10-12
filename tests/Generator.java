@@ -11,6 +11,11 @@ public class Generator {
             inf.println(n);
             for (int i = 0; i < n; ++i) {
                 int newValue = random.nextInt();
+                if (i == 748) {
+                    newValue = Integer.MAX_VALUE;
+                } else if (i == 8352) {
+                    newValue = Integer.MIN_VALUE;
+                }
                 inf.print(newValue);
                 sum += newValue;
                 if ((i + 1) % 1000 != 0) {
@@ -26,29 +31,22 @@ public class Generator {
         System.out.println("done!");
     }
 
-    public static void generateReadingIntsOr() throws IOException {
-        System.out.print("Generating 02-reading-ints-or... ");
+    public static void generateReadingLongs() throws IOException {
+        System.out.print("Generating 02-reading-longs... ");
         int n = 20000000;
         long sum = 0;
-        int badCount = 0;
-        Random random = new Random(236642346);
-        try (PrintWriter inf = new PrintWriter("02-reading-ints-or/input.txt")) {
+        Random random = new Random(487365843);
+        try (PrintWriter inf = new PrintWriter("02-reading-longs/input.txt")) {
             inf.println(n);
             for (int i = 0; i < n; ++i) {
-                if (random.nextInt(10) == 0) {
-                    switch (random.nextInt(8)) {
-                        case 0: inf.print(Integer.MAX_VALUE); sum += Integer.MAX_VALUE; break;
-                        case 1: inf.print(Integer.MIN_VALUE); sum += Integer.MIN_VALUE; break;
-                        case 2: inf.print(Integer.MAX_VALUE + 1L); ++badCount; break;
-                        case 3: inf.print(Integer.MIN_VALUE - 1L); ++badCount; break;
-                        case 4: inf.print("Badstring"); ++badCount; break;
-                        default: inf.print(random.nextLong()); ++badCount; break;
-                    }
-                } else {
-                    int newValue = random.nextInt();
-                    inf.print(newValue);
-                    sum += newValue;
+                long newValue = random.nextLong();
+                if (i == 25338) {
+                    newValue = Long.MAX_VALUE;
+                } else if (i == 57472) {
+                    newValue = Long.MIN_VALUE;
                 }
+                inf.print(newValue);
+                sum ^= newValue;
                 if ((i + 1) % 1000 != 0) {
                     inf.print(" ");
                 } else {
@@ -56,14 +54,62 @@ public class Generator {
                 }
             }
         }
-        try (PrintWriter ans = new PrintWriter("02-reading-ints-or/answer.txt")) {
-            ans.println(sum + " " + badCount);
+        try (PrintWriter ans = new PrintWriter("02-reading-longs/answer.txt")) {
+            ans.println(sum);
+        }
+        System.out.println("done!");
+    }
+
+    public static void generateWritingInts() throws IOException {
+        System.out.print("Generating 03-writing-ints... ");
+        int n = 20000000;
+        int a = 7823875, b = 761246357, c = 81387543;
+        int v0 = 723528643, v1 = -235745654;
+        try (PrintWriter inf = new PrintWriter("03-writing-ints/input.txt")) {
+            inf.println(n);
+            inf.println(a + " " + b + " " + c);
+            inf.println(v0 + " " + v1);
+        }
+        try (PrintWriter ans = new PrintWriter("03-writing-ints/answer.txt")) {
+            ans.print(v0 + " " + v1);
+            for (int i = 2; i < n; ++i) {
+                int v2 = a * v0 + b * v1 + c;
+                ans.print(" " + v2);
+                v0 = v1;
+                v1 = v2;
+            }
+            ans.println();
+        }
+        System.out.println("done!");
+    }
+
+    public static void generateWritingLongs() throws IOException {
+        System.out.print("Generating 04-writing-longs... ");
+        int n = 20000000;
+        long a = 11357823875L, b = -3576124635755L, c = 81387543;
+        long v0 = 723528643189235L, v1 = -235745654346322L;
+        try (PrintWriter inf = new PrintWriter("04-writing-longs/input.txt")) {
+            inf.println(n);
+            inf.println(a + " " + b + " " + c);
+            inf.println(v0 + " " + v1);
+        }
+        try (PrintWriter ans = new PrintWriter("04-writing-longs/answer.txt")) {
+            ans.print(v0 + " " + v1);
+            for (int i = 2; i < n; ++i) {
+                long v2 = a * v0 + b * v1 + c;
+                ans.print(" " + v2);
+                v0 = v1;
+                v1 = v2;
+            }
+            ans.println();
         }
         System.out.println("done!");
     }
 
     public static void main(String[] args) throws IOException {
         generateReadingInts();
-        generateReadingIntsOr();
+        generateReadingLongs();
+        generateWritingInts();
+        generateWritingLongs();
     }
 }
