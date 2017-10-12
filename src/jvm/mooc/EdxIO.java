@@ -114,11 +114,21 @@ public class EdxIO implements Closeable {
     }
 
     /**
-     * Skips all whitespace symbols in the input file,
-     * such that the subsequent call to {#currentSymbol} returns a non-whitespace symbol.
+     * Skips all whitespace symbols in the input file until the first non-whitespace symbol is found,
+     * such that the subsequent call to {#currentSymbol()} returns this symbol.
      */
     public void skipWhiteSpace() {
         while (inputPosition < inputCapacity && inputBuffer.get(inputPosition) <= 32) {
+            ++inputPosition;
+        }
+    }
+
+    /**
+     * Skips all whitespace symbols in the input file until the first non-whitespace symbol is found,
+     * such that the subsequent call to {#currentSymbol()} returns this symbol.
+     */
+    public void skipNonWhiteSpace() {
+        while (inputPosition < inputCapacity && inputBuffer.get(inputPosition) > 32) {
             ++inputPosition;
         }
     }
@@ -129,7 +139,7 @@ public class EdxIO implements Closeable {
      * Prints a character to the output file.
      * A '\n' char is converted to the native newline byte sequence.
      *
-     * @param the character to be printed.
+     * @param ch the character to be printed.
      */
     public void print(char ch) {
         if (ch == '\n') {
@@ -142,7 +152,7 @@ public class EdxIO implements Closeable {
     /**
      * Prints a character to the output file, and then puts a newline.
      *
-     * @param the character to be printed.
+     * @param ch the character to be printed.
      */
     public void println(char ch) {
         write((byte) (ch));
@@ -153,7 +163,7 @@ public class EdxIO implements Closeable {
      * Prints a String to the output file.
      * Every '\n' char is converted to the native newline byte sequence.
      *
-     * @param the string to be printed.
+     * @param s the string to be printed.
      */
     public void print(String s) {
         for (int i = 0, iMax = s.length(); i < iMax; ++i) {
@@ -165,7 +175,7 @@ public class EdxIO implements Closeable {
      * Prints a String to the output file, and then puts a newline.
      * Every '\n' char is converted to the native newline byte sequence.
      *
-     * @param the string to be printed.
+     * @param s the string to be printed.
      */
     public void println(String s) {
         for (int i = 0, iMax = s.length(); i < iMax; ++i) {
@@ -177,7 +187,7 @@ public class EdxIO implements Closeable {
     /**
      * Prints an int to the output file.
      *
-     * @param the int to be printed.
+     * @param value the int to be printed.
      */
     public void print(int value) {
         if (value == Integer.MIN_VALUE) {
@@ -187,22 +197,7 @@ public class EdxIO implements Closeable {
                 print('-');
                 value = -value;
             }
-            int pos = numberBuffer.length;
-            while (value >= 65536) {
-                int q = value / 100;
-                // really: r = i - (q * 100);
-                int r = value - ((q << 6) + (q << 5) + (q << 2));
-                value = q;
-                numberBuffer[--pos] = digitOnes[r];
-                numberBuffer[--pos] = digitTens[r];
-            }
-            while (true) {
-                int q = (value * 52429) >>> (16+3);
-                int r = value - ((q << 3) + (q << 1));  // r = i-(q*10) ...
-                numberBuffer[--pos] = digitOnes[r];
-                value = q;
-                if (value == 0) break;
-            }
+            int pos = intToBuffer(value, numberBuffer.length);
             write(numberBuffer, pos, numberBuffer.length - pos);
         }
     }
@@ -210,9 +205,45 @@ public class EdxIO implements Closeable {
     /**
      * Prints an int to the output file, and then puts a newline.
      *
-     * @param the int to be printed.
+     * @param value the int to be printed.
      */
     public void println(int value) {
+        print(value);
+        printNewLine();
+    }
+
+    /**
+     * Prints a long to the output file.
+     *
+     * @param value the long to be printed.
+     */
+    public void print(long value) {
+        if (value == Long.MIN_VALUE) {
+            print("-9223372036854775808");
+        } else {
+            if (value < 0) {
+                print('-');
+                value = -value;
+            }
+            int pos = numberBuffer.length;
+            while (value > Integer.MAX_VALUE) {
+                long q = value / 100;
+                int r = (int) (value - ((q << 6) + (q << 5) + (q << 2)));
+                value = q;
+                numberBuffer[--pos] = digitOnes[r];
+                numberBuffer[--pos] = digitTens[r];
+            }
+            pos = intToBuffer((int) value, pos);
+            write(numberBuffer, pos, numberBuffer.length - pos);
+        }
+    }
+
+    /**
+     * Prints a long to the output file, and then puts a newline.
+     *
+     * @param value the long to be printed.
+     */
+    public void println(long value) {
         print(value);
         printNewLine();
     }
@@ -366,6 +397,24 @@ public class EdxIO implements Closeable {
         48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
     } ;
 
+    private int intToBuffer(int value, int pos) {
+        while (value >= 65536) {
+            int q = value / 100;
+            // really: r = i - (q * 100);
+            int r = value - ((q << 6) + (q << 5) + (q << 2));
+            value = q;
+            numberBuffer[--pos] = digitOnes[r];
+            numberBuffer[--pos] = digitTens[r];
+        }
+        while (true) {
+            int q = (value * 52429) >>> (16+3);
+            int r = value - ((q << 3) + (q << 1));  // r = i-(q*10) ...
+            numberBuffer[--pos] = digitOnes[r];
+            value = q;
+            if (value == 0) break;
+        }
+        return pos;
+    }
 
     /*-************************* Closing *************************-*/
 
