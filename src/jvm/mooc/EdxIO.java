@@ -52,6 +52,24 @@ public class EdxIO implements Closeable {
 
     /*-************************* Public high-level API for input *************************-*/
 
+    public String next() {
+        skipWhiteSpace();
+        int start = inputPosition;
+        if (start >= inputCapacity) {
+            return null;
+        }
+        int finish = start;
+        while (finish < inputCapacity && inputBuffer.get(finish) > 32) {
+            ++finish;
+        }
+        char[] chars = new char[finish - start];
+        for (int i = 0, iMax = chars.length; i < iMax; ++i) {
+            chars[i] = (char) (inputBuffer.get(start + i));
+        }
+        inputPosition = finish;
+        return new String(chars);
+    }
+
     /**
      * Reads from the input file and returns the next int.
      *
