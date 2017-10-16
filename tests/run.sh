@@ -18,7 +18,9 @@ function run_java() {
     echo "    Java:"
     rm -rf mooc classes
     cp -r ../../src/jvm/mooc .
-    run_java_one "Test"
+    for t in Test*.java; do
+        run_java_one "${t:0:${#t}-5}"
+    done
     rm -rf mooc
     run_java_one "Reference"
 }

@@ -1,6 +1,7 @@
 package mooc;
 
 import java.io.*;
+import java.lang.invoke.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
@@ -126,26 +127,96 @@ public class EdxIO implements Closeable {
             isNegative = true;
             ++inputPosition;
         }
-        boolean hasDigits = false;
-        long value = 0;
-        while (true) {
-            byte next = currentSymbol();
-            if (next >= '0' && next <= '9') {
-                hasDigits = true;
+        return nextLongImpl(isNegative);
+    }
+
+    /**
+     * Reads from the input file and returns the next double.
+     * Internally, {@link Double.parseDouble(String)} is used.
+     * This is slow, as {@link String}s and {@code Matcher}s are involved.
+     * To read doubles faster, but in a not so conformant way, use {@link nextDoubleFast()}.
+     *
+     * This will:
+     * <ul>
+     * <li>skip all whitespace until the next non-whitespace symbol;</li>
+     * <li>consume all non-whitespace symbols until the next whitespace symbol;</li>
+     * <li>invoke {@link Double.parseDouble(String)} on the resulting character sequence and return the result.</li>
+     * </ul>
+     *
+     * Regardless of whether double parsing is successful, the stream pointer for the input file points to the first
+     * whitespace symbol after the sequence of non-whitespace characters which has just been read.
+     *
+     * @return the double value which has just been read from the input file.
+     */
+    public double nextDoublePrecise() {
+        doubleBuffer.setLength(0);
+        skipWhiteSpace();
+        if (inputPosition >= inputCapacity) {
+            throw new InputMismatchException("Unexpected end of file");
+        }
+        byte next;
+        while ((next = currentSymbol()) > 32) {
+            doubleBuffer.append((char) (next));
+            ++inputPosition;
+        }
+        return Double.parseDouble(doubleBuffer.toString());
+    }
+
+    /**
+     * Reads from the input file and returns the next double.
+     * This is a custom implementation which is not guaranteed to read all doubles {@link nextDoublePrecise()} does,
+     * nor guaranteed to return the same values as {@link nextDoublePrecise()} does on the same input.
+     * However, it is very fast.
+     *
+     * This will:
+     * <ul>
+     * <li>skip all whitespace until the next non-whitespace symbol;</li>
+     * <li>try reading a long;</li>
+     * <li>if the next symbol is a dot, skip this dot and continue, otherwise return the long value which has just been read;</li>
+     * <li>try reading a long, interpret it as a decimal part of the double, add it up with the first long, checking signs.</li>
+     * <li>if the next symbol is either 'e' or 'E', skip this symbol and continue, otherwise return the result of the previous step.</li>
+     * <li>try reading an int, interpret it as an exponent, apply it and return the value.</li>
+     * </ul>
+     *
+     * The state of the stream after returning from this function depends on the input as if exactly the same sequence as above
+     * is executed, see {@link nextLong()}.
+     *
+     * @return the double value which has just been read from the input file.
+     */
+    public double nextDoubleFast() {
+        skipWhiteSpace();
+        boolean isNegative = false;
+        if (currentSymbol() == '-') {
+            isNegative = true;
+            ++inputPosition;
+        }
+        long first = nextLongImpl(isNegative);
+        if (currentSymbol() == '.') {
+            int startPosition = ++inputPosition;
+            double second = nextLongImpl(false);
+            int endPosition = inputPosition;
+            for (int i = startPosition; i < endPosition; ++i) {
+                second /= 10;
+            }
+            double rv = isNegative ? first - second : first + second;
+            if (currentSymbol() == 'e' || currentSymbol() == 'E') {
                 ++inputPosition;
-                int add = next - '0';
-                if (nextLongImplIsSafe(value, add, isNegative)) {
-                    value = value * 10 + add;
-                } else {
-                    throw new NumberFormatException();
+                if (currentSymbol() == '+') {
+                    ++inputPosition;
                 }
-            } else {
-                if (hasDigits) {
-                    return isNegative ? -value : value;
-                } else {
-                    throw new NumberFormatException();
+                int exponent = nextInt();
+                while (exponent > 0) {
+                    --exponent;
+                    rv *= 10;
+                }
+                while (exponent < 0) {
+                    ++exponent;
+                    rv /= 10;
                 }
             }
+            return rv;
+        } else {
+            return first;
         }
     }
 
@@ -227,7 +298,7 @@ public class EdxIO implements Closeable {
      * @param s the string to be printed.
      * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public EdxIO print(String s) {
+    public EdxIO print(CharSequence s) {
         for (int i = 0, iMax = s.length(); i < iMax; ++i) {
             print(s.charAt(i));
         }
@@ -241,7 +312,7 @@ public class EdxIO implements Closeable {
      * @param s the string to be printed.
      * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
-    public EdxIO println(String s) {
+    public EdxIO println(CharSequence s) {
         for (int i = 0, iMax = s.length(); i < iMax; ++i) {
             print(s.charAt(i));
         }
@@ -292,6 +363,7 @@ public class EdxIO implements Closeable {
                 print('-');
                 value = -value;
             }
+            // This is adapted from String.valueOf(long)
             int pos = numberBuffer.length;
             while (value > Integer.MAX_VALUE) {
                 long q = value / 100;
@@ -316,6 +388,27 @@ public class EdxIO implements Closeable {
         return print(value).println();
     }
 
+    /**
+     * Prints a double to the output file.
+     *
+     * @param value the double to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
+     */
+    public EdxIO print(double value) {
+        appendToBuffer(value);
+        return print(doubleBuffer);
+    }
+
+    /**
+     * Prints a double to the output file, and then puts a newline.
+     *
+     * @param value the double to be printed.
+     * @return this instance of {@code EdxIO} to be used with chaining calls.
+     */
+    public EdxIO println(double value) {
+        return print(value).println();
+    }
+
     /*-************************* Fields and initialization *************************-*/
 
     private FileInputStream inputStream;
@@ -330,6 +423,8 @@ public class EdxIO implements Closeable {
 
     private final byte[] numberBuffer = new byte[32];
     private final byte[] lineSeparatorChars = System.lineSeparator().getBytes();
+    private final StringBuilder doubleBuffer = new StringBuilder(100);
+    private MethodHandle sunWriter;
 
     private EdxIO(String inputFileName, String outputFileName) {
         try {
@@ -347,6 +442,28 @@ public class EdxIO implements Closeable {
             closeImpl();
             throw new UncheckedIOException(ex);
         }
+
+        try {
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            MethodType type = MethodType.methodType(void.class, double.class, Appendable.class);
+            Class floatingPointDecimal = Class.forName("sun.misc.FloatingDecimal");
+            sunWriter = lookup.findStatic(floatingPointDecimal, "appendTo", type);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
+    private void appendToBuffer(double value) {
+        doubleBuffer.setLength(0);
+        if (sunWriter != null) {
+            try {
+                sunWriter.invokeExact(value, (Appendable)doubleBuffer);
+                return;
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
+        doubleBuffer.append(value);
     }
 
     /*-************************* Implementation of nextInt *************************-*/
@@ -359,6 +476,30 @@ public class EdxIO implements Closeable {
             return false;
         }
         return isNegative ? add <= 8 : add < 8;
+    }
+
+    private long nextLongImpl(boolean isNegative) {
+        boolean hasDigits = false;
+        long value = 0;
+        while (true) {
+            byte next = currentSymbol();
+            if (next >= '0' && next <= '9') {
+                hasDigits = true;
+                ++inputPosition;
+                int add = next - '0';
+                if (nextLongImplIsSafe(value, add, isNegative)) {
+                    value = value * 10 + add;
+                } else {
+                    throw new NumberFormatException();
+                }
+            } else {
+                if (hasDigits) {
+                    return isNegative ? -value : value;
+                } else {
+                    throw new NumberFormatException();
+                }
+            }
+        }
     }
 
     private boolean nextLongImplIsSafe(long value, int add, boolean isNegative) {
@@ -433,6 +574,7 @@ public class EdxIO implements Closeable {
     } ;
 
     private int intToBuffer(int value, int pos) {
+        // This is adapted from String.valueOf(int)
         while (value >= 65536) {
             int q = value / 100;
             // really: r = i - (q * 100);
