@@ -31,7 +31,7 @@ the number of characters read. If the token exceeds the maximum length, the rest
 * `void edx_println_i64(char*)` -- writes a string given as `char*` and puts a newline.
 * `int edx_printf(char *fmt_string, ...)` -- writes a variable number of arguments using the format string in the manner of `printf`, returns the number of entries written.
 
-## Example solutions of the A+B problem
+## Example solution of the A+B problem
 
 ```
 #include "edx-io.h"
