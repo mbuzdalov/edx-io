@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TIMEFORMAT="          time:     %U"
+
 function print_io_sizes() {
     echo -n "          input:    "
     ls -la input.txt | awk '{ print $5 " bytes"}'
@@ -11,8 +13,7 @@ function run_java_one() {
     mkdir classes
     javac $1.java -d classes
     echo "        $1.java"
-    /usr/bin/time -f "          times:    %U/%S/%M" java -Xmx256M -cp classes $1 && \
-        echo "          finished: OK" || echo "          finished: FAILED"
+    time java -Xmx256M -cp classes $1 && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
     ./check answer.txt output.txt
     print_io_sizes
@@ -37,8 +38,7 @@ function run_c_one() {
     done
     gcc -O2 $C_FILES -lm -o $1.exe
     echo "        $1.c"
-    /usr/bin/time -f "          times:    %U/%S/%M" ./$1.exe && \
-        echo "          finished: OK" || echo "          finished: FAILED"
+    time ./$1.exe && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
     ./check answer.txt output.txt
     print_io_sizes
