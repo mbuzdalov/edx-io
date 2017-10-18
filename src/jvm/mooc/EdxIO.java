@@ -1,7 +1,6 @@
 package mooc;
 
 import java.io.*;
-import java.lang.invoke.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.file.*;
@@ -413,8 +412,8 @@ public class EdxIO implements Closeable {
      * @return this instance of {@code EdxIO} to be used with chaining calls.
      */
     public EdxIO print(double value) {
-        appendToBuffer(value);
-        return print(doubleBuffer);
+        doubleBuffer.setLength(0);
+        return print(doubleBuffer.append(value));
     }
 
     /**
@@ -442,7 +441,6 @@ public class EdxIO implements Closeable {
     private final byte[] numberBuffer = new byte[32];
     private final byte[] lineSeparatorChars = System.lineSeparator().getBytes();
     private final StringBuilder doubleBuffer = new StringBuilder(100);
-    private MethodHandle sunWriter;
 
     private EdxIO(String inputFileName, String outputFileName) {
         try {
@@ -460,28 +458,6 @@ public class EdxIO implements Closeable {
             closeImpl();
             throw new UncheckedIOException(ex);
         }
-
-        try {
-            MethodHandles.Lookup lookup = MethodHandles.lookup();
-            MethodType type = MethodType.methodType(void.class, double.class, Appendable.class);
-            Class floatingPointDecimal = Class.forName("sun.misc.FloatingDecimal");
-            sunWriter = lookup.findStatic(floatingPointDecimal, "appendTo", type);
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
-    }
-
-    private void appendToBuffer(double value) {
-        doubleBuffer.setLength(0);
-        if (sunWriter != null) {
-            try {
-                sunWriter.invokeExact(value, (Appendable)doubleBuffer);
-                return;
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-        doubleBuffer.append(value);
     }
 
     /*-************************* Implementation of nextInt *************************-*/
