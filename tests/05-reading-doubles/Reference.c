@@ -10,7 +10,7 @@ int main() {
         if (fscanf(input, "%lf", &v) != 1) return 1;
         sum += v;
     }
-    fprintf(output, "%.17lf\n", sum);
+    fprintf(output, "%.17lg\n", sum);
     fclose(input);
     fclose(output);
     return 0;

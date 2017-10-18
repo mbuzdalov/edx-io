@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function print_io_sizes() {
+    echo -n "          input:    "
+    ls -la input.txt | awk '{ print $5 " bytes"}'
+    echo -n "          output:   "
+    ls -la output.txt | awk '{ print $5 " bytes"}'
+}
+
 function run_java_one() {
     mkdir classes
     javac $1.java -d classes
@@ -8,6 +15,7 @@ function run_java_one() {
         echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
     ./check answer.txt output.txt
+    print_io_sizes
     rm -rf output.txt classes
 }
 
@@ -33,13 +41,14 @@ function run_c_one() {
         echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
     ./check answer.txt output.txt
+    print_io_sizes
     rm $1.exe
 }
 
 function run_c() {
     echo "    C:"
     rm -rf edx-io.*
-    cp -r ../../src/c/* .
+    cp -r ../../src/c/edx-io.* .
     for t in Test*.c; do
         run_c_one "${t:0:${#t}-2}" "edx-io"
     done
