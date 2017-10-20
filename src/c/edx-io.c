@@ -7,6 +7,11 @@
 
 FILE *inf = NULL, *ouf = NULL;
 
+char number_buffer[256];
+
+int int_to_buffer(int value, int pos);
+int long_long_to_buffer(long long value, int pos);
+
 void edx_open() {
     inf = fopen("input.txt", "rt");
     if (inf == NULL) {
@@ -137,7 +142,20 @@ void edx_println_char(char value) {
 }
 
 void edx_print_i32(int value) {
+#ifdef PRIMITIVES_THROUGH_PRINTF
     fprintf(ouf, "%d", value);
+#else
+    if (value == -2147483648) {
+        edx_print("-2147483648");
+    } else {
+        if (value < 0) {
+            edx_print_char('-');
+            value = -value;
+        }
+        int pos = int_to_buffer(value, 255);
+        edx_print(number_buffer + pos);
+    }
+#endif
 }
 
 void edx_println_i32(int value) {
@@ -146,7 +164,20 @@ void edx_println_i32(int value) {
 }
 
 void edx_print_i64(long long value) {
+#ifdef PRIMITIVES_THROUGH_PRINTF
     fprintf(ouf, "%lld", value);
+#else
+    if (value == 1LL << 63) {
+        edx_print("-9223372036854775808");
+    } else {
+        if (value < 0) {
+            edx_print_char('-');
+            value = -value;
+        }
+        int pos = long_long_to_buffer(value, 255);
+        edx_print(number_buffer + pos);
+    }
+#endif
 }
 
 void edx_println_i64(long long value) {
@@ -161,4 +192,61 @@ void edx_print_double(double value) {
 void edx_println_double(double value) {
     edx_print_double(value);
     fputc('\n', ouf);
+}
+
+char digit_tens[] = {
+        48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
+        49, 49, 49, 49, 49, 49, 49, 49, 49, 49,
+        50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+        51, 51, 51, 51, 51, 51, 51, 51, 51, 51,
+        52, 52, 52, 52, 52, 52, 52, 52, 52, 52,
+        53, 53, 53, 53, 53, 53, 53, 53, 53, 53,
+        54, 54, 54, 54, 54, 54, 54, 54, 54, 54,
+        55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
+        56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+        57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
+};
+
+char digit_ones[] = {
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+        48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+};
+
+int int_to_buffer(int value, int pos) {
+    while (value >= 65536) {
+        int q = value / 100;
+        int r = value - ((q << 6) + (q << 5) + (q << 2));
+        value = q;
+        number_buffer[--pos] = digit_ones[r];
+        number_buffer[--pos] = digit_tens[r];
+    }
+    while (1) {
+        int q = (int) ((unsigned) (value * 52429) >> (16+3));
+        int r = value - ((q << 3) + (q << 1));
+        number_buffer[--pos] = digit_ones[r];
+        value = q;
+        if (value == 0) {
+            break;
+        }
+    }
+    return pos;
+}
+
+int long_long_to_buffer(long long value, int pos) {
+    while (value > 2147483647LL) {
+        long long q = value / 100;
+        int r = (int) (value - ((q << 6) + (q << 5) + (q << 2)));
+        value = q;
+        number_buffer[--pos] = digit_ones[r];
+        number_buffer[--pos] = digit_tens[r];
+    }
+    return int_to_buffer((int) value, pos);
 }
