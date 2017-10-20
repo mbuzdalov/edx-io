@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ "$1" == "clean" ]]; then
+    rm -f */{input,output,answer}.txt
+    rm -f *.class
+    exit 0
+fi
+
 TIMEFORMAT="          time:     %U"
 
 function print_io_sizes() {
@@ -36,7 +42,7 @@ function run_c_one() {
     for C_FILE in "${@}"; do
         C_FILES="$C_FILES $C_FILE.c"
     done
-    gcc -O2 $C_FILES -lm -o $1.exe
+    gcc -O3 $C_FILES -lm -o $1.exe
     echo "        $1.c"
     time ./$1.exe && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
@@ -70,7 +76,13 @@ SimpleChecker
 javac Generator.java
 java Generator
 
-for TEST in 0{1,2,3,4,5,6}*; do
+if [[ "$1" == "" ]]; then
+    MASK=0*
+else
+    MASK="$1"
+fi
+
+for TEST in $MASK; do
     pushd $TEST > /dev/null
     echo "Running test $TEST"
     if [[ -f check.c ]]; then
@@ -85,5 +97,5 @@ for TEST in 0{1,2,3,4,5,6}*; do
     popd > /dev/null
 done
 
-rm -f */{input,output,answer}.txt
+rm -f */{output}.txt
 rm -f *.class

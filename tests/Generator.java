@@ -4,11 +4,17 @@ import java.util.*;
 public class Generator {
     private static final int n = 10000000;
 
-    public static void generateReadingInts() throws IOException {
-        System.out.print("Generating 01-reading-ints... ");
+    public static void generateReadingInts(String root, long sourceDate) throws IOException {
+        System.out.print("Generating " + root + "... ");
+        File inFile = new File(root, "input.txt");
+        File ansFile = new File(root, "answer.txt");
+        if (inFile.lastModified() > sourceDate && ansFile.lastModified() > sourceDate) {
+            System.out.println("already exist.");
+            return;
+        }
         long sum = 0;
         Random random = new Random(487365843);
-        try (PrintWriter inf = new PrintWriter("01-reading-ints/input.txt")) {
+        try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             for (int i = 0; i < n; ++i) {
                 int newValue = random.nextInt();
@@ -26,17 +32,23 @@ public class Generator {
                 }
             }
         }
-        try (PrintWriter ans = new PrintWriter("01-reading-ints/answer.txt")) {
+        try (PrintWriter ans = new PrintWriter(ansFile)) {
             ans.println(sum);
         }
         System.out.println("done!");
     }
 
-    public static void generateReadingLongs() throws IOException {
-        System.out.print("Generating 02-reading-longs... ");
+    public static void generateReadingLongs(String root, long sourceDate) throws IOException {
+        System.out.print("Generating " + root + "... ");
+        File inFile = new File(root, "input.txt");
+        File ansFile = new File(root, "answer.txt");
+        if (inFile.lastModified() > sourceDate && ansFile.lastModified() > sourceDate) {
+            System.out.println("already exist.");
+            return;
+        }
         long sum = 0;
         Random random = new Random(487365843);
-        try (PrintWriter inf = new PrintWriter("02-reading-longs/input.txt")) {
+        try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             for (int i = 0; i < n; ++i) {
                 long newValue = random.nextLong();
@@ -54,17 +66,23 @@ public class Generator {
                 }
             }
         }
-        try (PrintWriter ans = new PrintWriter("02-reading-longs/answer.txt")) {
+        try (PrintWriter ans = new PrintWriter(ansFile)) {
             ans.println(sum);
         }
         System.out.println("done!");
     }
 
-    public static void generateReadingDoubles() throws IOException {
-        System.out.print("Generating 05-reading-doubles... ");
+    public static void generateReadingDoubles(String root, long sourceDate) throws IOException {
+        System.out.print("Generating " + root + "... ");
+        File inFile = new File(root, "input.txt");
+        File ansFile = new File(root, "answer.txt");
+        if (inFile.lastModified() > sourceDate && ansFile.lastModified() > sourceDate) {
+            System.out.println("already exist.");
+            return;
+        }
         double sum = 0;
         Random random = new Random(487365843);
-        try (PrintWriter inf = new PrintWriter("05-reading-doubles/input.txt")) {
+        try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             for (int i = 0; i < n; ++i) {
                 double newValue = random.nextDouble() * (random.nextBoolean() ? 1000000 : 1);
@@ -80,22 +98,28 @@ public class Generator {
                 }
             }
         }
-        try (PrintWriter ans = new PrintWriter("05-reading-doubles/answer.txt")) {
+        try (PrintWriter ans = new PrintWriter(ansFile)) {
             ans.println(sum);
         }
         System.out.println("done!");
     }
 
-    public static void generateWritingInts() throws IOException {
-        System.out.print("Generating 03-writing-ints... ");
+    public static void generateWritingInts(String root, long sourceDate) throws IOException {
+        System.out.print("Generating " + root + "... ");
+        File inFile = new File(root, "input.txt");
+        File ansFile = new File(root, "answer.txt");
+        if (inFile.lastModified() > sourceDate && ansFile.lastModified() > sourceDate) {
+            System.out.println("already exist.");
+            return;
+        }
         int a = 7823875, b = 761246357, c = 81387543;
         int v0 = 723528643, v1 = -235745654;
-        try (PrintWriter inf = new PrintWriter("03-writing-ints/input.txt")) {
+        try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             inf.println(a + " " + b + " " + c);
             inf.println(v0 + " " + v1);
         }
-        try (PrintWriter ans = new PrintWriter("03-writing-ints/answer.txt")) {
+        try (PrintWriter ans = new PrintWriter(ansFile)) {
             ans.print(v0 + " " + v1);
             for (int i = 2; i < n; ++i) {
                 int v2 = a * v0 + b * v1 + c;
@@ -108,16 +132,22 @@ public class Generator {
         System.out.println("done!");
     }
 
-    public static void generateWritingLongs() throws IOException {
-        System.out.print("Generating 04-writing-longs... ");
+    public static void generateWritingLongs(String root, long sourceDate) throws IOException {
+        System.out.print("Generating " + root + "... ");
+        File inFile = new File(root, "input.txt");
+        File ansFile = new File(root, "answer.txt");
+        if (inFile.lastModified() > sourceDate && ansFile.lastModified() > sourceDate) {
+            System.out.println("already exist.");
+            return;
+        }
         long a = 11357823875L, b = -3576124635755L, c = 81387543;
         long v0 = 723528643189235L, v1 = -235745654346322L;
-        try (PrintWriter inf = new PrintWriter("04-writing-longs/input.txt")) {
+        try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             inf.println(a + " " + b + " " + c);
             inf.println(v0 + " " + v1);
         }
-        try (PrintWriter ans = new PrintWriter("04-writing-longs/answer.txt")) {
+        try (PrintWriter ans = new PrintWriter(ansFile)) {
             ans.print(v0 + " " + v1);
             for (int i = 2; i < n; ++i) {
                 long v2 = a * v0 + b * v1 + c;
@@ -130,16 +160,22 @@ public class Generator {
         System.out.println("done!");
     }
 
-    public static void generateWritingDoubles() throws IOException {
-        System.out.print("Generating 06-writing-doubles... ");
+    public static void generateWritingDoubles(String root, long sourceDate) throws IOException {
+        System.out.print("Generating " + root + "... ");
+        File inFile = new File(root, "input.txt");
+        File ansFile = new File(root, "answer.txt");
+        if (inFile.lastModified() > sourceDate && ansFile.lastModified() > sourceDate) {
+            System.out.println("already exist.");
+            return;
+        }
         long a = 11357823875L, b = -3576124635755L, c = 81387543;
         long v0 = 723528643189235L, v1 = -235745654346322L;
-        try (PrintWriter inf = new PrintWriter("06-writing-doubles/input.txt")) {
+        try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             inf.println(a + " " + b + " " + c);
             inf.println(v0 + " " + v1);
         }
-        try (PrintWriter ans = new PrintWriter("06-writing-doubles/answer.txt")) {
+        try (PrintWriter ans = new PrintWriter(ansFile)) {
             ans.print(v0 + " " + v1);
             for (int i = 2; i < n; ++i) {
                 long v2 = a * v0 + b * v1 + c;
@@ -153,11 +189,12 @@ public class Generator {
     }
 
     public static void main(String[] args) throws IOException {
-        generateReadingInts();
-        generateReadingLongs();
-        generateWritingInts();
-        generateWritingLongs();
-        generateReadingDoubles();
-        generateWritingDoubles();
+        long sourceDate = new File("Generator.java").lastModified();
+        generateReadingInts("01-reading-ints", sourceDate);
+        generateReadingLongs("02-reading-longs", sourceDate);
+        generateWritingInts("03-writing-ints", sourceDate);
+        generateWritingLongs("04-writing-longs", sourceDate);
+        generateReadingDoubles("05-reading-doubles", sourceDate);
+        generateWritingDoubles("06-writing-doubles", sourceDate);
     }
 }

@@ -9,7 +9,15 @@ FILE *inf = NULL, *ouf = NULL;
 
 void edx_open() {
     inf = fopen("input.txt", "rt");
+    if (inf == NULL) {
+        perror("Cannot open file 'input.txt' for reading");
+        exit(1);
+    }
     ouf = fopen("output.txt", "wt");
+    if (ouf == NULL) {
+        perror("Cannot open file 'output.txt' for writing");
+        exit(1);
+    }
 }
 
 void edx_close() {
