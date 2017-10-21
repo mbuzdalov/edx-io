@@ -28,13 +28,14 @@
                 err,
                 0, // the language: 0 means "guess on your own"
                 (LPTSTR) &msg,
-                0 // nSize which is ignored
+                0, // nSize which is ignored
+                NULL // varargs which are not used
             );
             if (symbol_cnt == 0) {
                 print_windows_error_and_exit();
             }
             fputs(msg, stderr);
-            HeapFree(GetProcessHeap(), msg);
+            HeapFree(GetProcessHeap(), 0, msg);
             exit(1);
         }
 
