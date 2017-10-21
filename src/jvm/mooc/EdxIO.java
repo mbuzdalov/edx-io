@@ -51,6 +51,21 @@ public class EdxIO implements Closeable {
 
     /*-************************* Public high-level API for input *************************-*/
 
+    /**
+     * Reads from the input file and returns the next non-whitespace token.
+     *
+     * This will:
+     * <ul>
+     * <li>skip all whitespace until the next non-whitespace symbol;</li>
+     * <li>consume all non-whitespace symbols until the next whitespace symbol;</li>
+     * <li>return the consumed symbols as a {@link String}.</li>
+     * </ul>
+     *
+     * When the operation succeeds, the stream pointer for the input file points to the next
+     * symbol after the last symbol of the consumed token.
+     *
+     * @return the next non-whitespace token.
+     */
     public String next() {
         skipWhiteSpace();
         int start = inputPosition;
@@ -269,6 +284,22 @@ public class EdxIO implements Closeable {
      */
     public byte currentSymbol() {
         return inputPosition < inputCapacity ? inputBuffer.get(inputPosition) : (byte)-1;
+    }
+
+    /**
+     * Skips the specified number of symbols from the input.
+     * @param nSymbols the number of symbols to skip.
+     */
+    public void skipSymbols(int nSymbols) {
+        if (nSymbols < 0) {
+            throw new IllegalArgumentException("Negative number of symbols to skip");
+        }
+        int diff = inputCapacity - inputPosition;
+        if (diff > nSymbols) {
+            inputCapacity += nSymbols;
+        } else {
+            inputCapacity = inputPosition;
+        }
     }
 
     /**
