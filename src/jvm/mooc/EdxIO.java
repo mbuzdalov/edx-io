@@ -70,6 +70,28 @@ public class EdxIO implements Closeable {
     }
 
     /**
+     * Reads from the input file and returns the next non-whitespace character.
+     *
+     * This will:
+     * <ul>
+     * <li>skip all whitespace until the next non-whitespace symbol;</li>
+     * <li>read the first symbol, removes it from the stream and returns it.</li>
+     * </ul>
+     *
+     * @return the next non-whitespace character.
+     * @throws UncheckedIOException when there is no character to return.
+     */
+    public char nextChar() {
+        skipWhiteSpace();
+        if (inputPosition >= inputCapacity) {
+            throw new UncheckedIOException("Unexpected end-of-file");
+        }
+        char rv = currentSymbol();
+        ++inputPosition;
+        return rv;
+    }
+
+    /**
      * Reads from the input file and returns the next int.
      *
      * This will:
