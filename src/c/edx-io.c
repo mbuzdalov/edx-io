@@ -19,6 +19,8 @@
     #ifdef _WIN32
         #include <windows.h>
 
+        #define CAN_WRITE_TO_PAGES 0
+
         void print_windows_error_and_exit() {
             DWORD err = GetLastError();
             LPTSTR msg;
@@ -78,6 +80,8 @@
         #include <sys/types.h>
         #include <unistd.h>
 
+        #define CAN_WRITE_TO_PAGES 1
+
         int input_file_descriptor;
 
         void edx_open_input() {
@@ -130,7 +134,7 @@
         }
         size = mmap_ptr - rv;
         if (length) *length = size;
-        if (mmap_ptr == mmap_end) {
+        if (!CAN_WRITE_TO_PAGES || mmap_ptr == mmap_end) {
             // We cannot write an extra '\0' after the token,
             // since it will be outside the mapped region
             if (copy_was_made) *copy_was_made = 1;
@@ -239,7 +243,7 @@
     double edx_next_double() {
         int copy_was_made;
         char *token = consume_token(&copy_was_made, NULL);
-        double rv = strtod(token, NULL);
+        double rv = atof(token);
         check_erange("Error while running edx_next_double");
         if (copy_was_made) {
             free(token);
