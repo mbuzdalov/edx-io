@@ -79,14 +79,14 @@ public class EdxIO implements Closeable {
      * </ul>
      *
      * @return the next non-whitespace character.
-     * @throws UncheckedIOException when there is no character to return.
+     * @throws IllegalStateException when there is no character to return.
      */
     public char nextChar() {
         skipWhiteSpace();
         if (inputPosition >= inputCapacity) {
-            throw new UncheckedIOException("Unexpected end-of-file");
+            throw new IllegalStateException("Unexpected end-of-file");
         }
-        char rv = currentSymbol();
+        char rv = (char) currentSymbol();
         ++inputPosition;
         return rv;
     }
