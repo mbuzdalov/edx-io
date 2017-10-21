@@ -11,6 +11,14 @@
 #define INPUT_FILE_OPEN_ERROR "Cannot open file '" INPUT_FILE_NAME "' for reading"
 #define OUTPUT_FILE_OPEN_ERROR "Cannot open file '" OUTPUT_FILE_NAME "' for writing"
 
+// We'll keep both versions for a while: the new mmap-ed and the old stdio-based.
+
+// All things should be faster in the new one,
+// except for probably reading doubles, which should be at roughly the same speed.
+
+// The server will be running mmap-ed version unless critical bugs are found
+#define EDX_IO_INPUT_MMAP
+
 #ifdef EDX_IO_INPUT_MMAP
     char *mmap_buf;
     char *mmap_end;
