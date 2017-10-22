@@ -69,12 +69,12 @@ edx_io const &edx_io::operator << (std::string const &value) const {
     return *this;
 }
 
-edx_io const &operator << (char const *value) const {
+edx_io const &edx_io::operator << (char const *value) const {
     edx_print(value);
     return *this;
 }
 
-edx_io const &operator << (char value) const {
+edx_io const &edx_io::operator << (char value) const {
     edx_print_char(value);
     return *this;
 }
