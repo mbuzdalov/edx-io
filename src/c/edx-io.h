@@ -80,18 +80,18 @@ void edx_println_char(char value);
 /**
  * Prints the given string.
  */
-void edx_print(char *string);
+void edx_print(char const *string);
 
 /**
  * Prints the given string and puts a newline ('\n') after it.
  */
-void edx_println(char *string);
+void edx_println(char const *string);
 
 /**
  * Prints the text using the given format string and other arguments.
  * Usual conventions apply.
  */
-int edx_printf(char *fmt_string, ...);
+int edx_printf(char const *fmt_string, ...);
 
 /**
  * THIS IS AN UNSAFE PART. DON'T USE IT UNLESS YOU REALLY KNOW HOW IT WORKS.

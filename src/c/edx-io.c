@@ -125,7 +125,7 @@
         }
     }
 
-    char *copy_string_contents(char *source, int length) {
+    char *copy_string_contents(char const *source, int length) {
         char *rv = (char*) (malloc(sizeof(char) * (length + 1)));
         memcpy(rv, source, sizeof(char) * length);
         rv[length] = 0;
@@ -163,7 +163,7 @@
         }
     }
 
-    void check_erange(char *message) {
+    void check_erange(char const *message) {
         if (errno == ERANGE) {
             perror(message);
             exit(1);
@@ -416,7 +416,7 @@ void edx_close() {
     fclose(ouf);
 }
 
-int edx_printf(char *fmt_string, ...) {
+int edx_printf(char const *fmt_string, ...) {
     int rv;
     va_list args;
     va_start(args, fmt_string);
@@ -425,11 +425,11 @@ int edx_printf(char *fmt_string, ...) {
     return rv;
 }
 
-void edx_print(char *string) {
+void edx_print(char const *string) {
     fputs(string, ouf);
 }
 
-void edx_println(char *string) {
+void edx_println(char const *string) {
     fputs(string, ouf);
     fputc('\n', ouf);
 }
