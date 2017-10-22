@@ -132,7 +132,7 @@
         return rv;
     }
 
-    char *consume_token(int *copy_was_made, int *length) {
+    char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed) {
         char *rv;
         int size;
         skip_whitespace();
@@ -140,19 +140,26 @@
         while (mmap_ptr < mmap_end && *mmap_ptr > ' ') {
             ++mmap_ptr;
         }
-        size = mmap_ptr - rv;
-        if (length) *length = size;
+        if (length) *length = mmap_ptr - rv;
+        if (must_be_freed) *must_be_freed = 0;
         if (!CAN_WRITE_TO_PAGES || mmap_ptr == mmap_end) {
-            // We cannot write an extra '\0' after the token,
-            // since it will be outside the mapped region
-            if (copy_was_made) *copy_was_made = 1;
-            return copy_string_contents(rv, size);
+            if (ends_with_zero) *ends_with_zero = 0;
         } else {
-            // We can write an extra '\0' after the token.
-            // For this, we used the private mapping and R/W pages.
-            if (copy_was_made) *copy_was_made = 0;
             *mmap_ptr++ = 0;
+            if (ends_with_zero) *ends_with_zero = 1;
+        }
+        return rv;
+    }
+
+    char *consume_token(int *copy_was_made, int *length) {
+        int ends_with_zero;
+        char *rv = edx_unsafe_read_token(length, &ends_with_zero, NULL);
+        if (ends_with_zero) {
+            if (copy_was_made) *copy_was_made = 0;
             return rv;
+        } else {
+            if (copy_was_made) *copy_was_made = 1;
+            return copy_string_contents(rv, *length);
         }
     }
 
@@ -379,6 +386,14 @@
                 rv = (char*) realloc(rv, rv_size);
             }
         }
+    }
+
+    char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed) {
+        char *rv = edx_next_unbounded();
+        if (length)         *length = strlen(rv);
+        if (ends_with_zero) *ends_with_zero = 1;
+        if (must_be_freed)  *must_be_freed = 1;
+        return rv;
     }
 #endif
 

@@ -93,4 +93,24 @@ void edx_println(char *string);
  */
 int edx_printf(char *fmt_string, ...);
 
+/**
+ * THIS IS AN UNSAFE PART. DON'T USE IT UNLESS YOU REALLY KNOW HOW IT WORKS.
+ *
+ * Reads a non-whitespace token and returns a pointer to it.
+ *
+ * The memory which the token occupies is guaranteed to remain intact in subsequent calls.
+ * This memory can be READ-ONLY.
+ *
+ * Depending on an implementation, you may or may not require to call "free" on the pointer
+ * when it is no longer needed.
+ *
+ * The token may or may NOT end with a zero character '\0'. However, the implementation
+ * will try its best to add this zero character. The length of the token is also returned.
+ *
+ * The idea of this function is to avoid copying when possible.
+ *
+ * All arguments may be NULL, in which case the value is not filled.
+ */
+char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed);
+
 #endif

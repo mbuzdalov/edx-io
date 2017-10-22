@@ -62,6 +62,32 @@ function run_c() {
     run_c_one "Reference"
 }
 
+function run_cpp_one() {
+    CPP_FILES=
+    for CPP_FILE in "${@}"; do
+        CPP_FILES="$CPP_FILES $CPP_FILE.cpp"
+    done
+    g++ -O3 $C_FILES -o $1.exe
+    echo "        $1.cpp"
+    time ./$1.exe && echo "          finished: OK" || echo "          finished: FAILED"
+    echo -n "          check:    "
+    ./check answer.txt output.txt
+    print_io_sizes
+    rm $1.exe
+}
+
+function run_cpp() {
+    echo "    C++:"
+    rm -rf edx-io.*
+    cp -r ../../src/c/edx-io.* .
+    cp -r ../../src/c++/edx-io.* .
+    for t in Test*.cpp; do
+        run_c_one "${t:0:${#t}-4}" "edx-io"
+    done
+    rm -rf edx-io.*
+    run_c_one "Reference"
+}
+
 function cat_simple_checker() {
 cat <<SimpleChecker
 #!/bin/bash
@@ -93,6 +119,7 @@ for TEST in $MASK; do
     fi
     run_java
     run_c
+    run_cpp
     rm -f check
     popd > /dev/null
 done
