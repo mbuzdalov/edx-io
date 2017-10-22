@@ -4,12 +4,12 @@ int main() {
     std::ifstream input("input.txt");
     std::ofstream output("output.txt");
     int n;
-    long long v, xor = 0;
+    long long v, xorv = 0;
     input >> n;
     for (int i = 0; i < n; ++i) {
         input >> v;
-        xor ^= v;
+        xorv ^= v;
     }
-    output << v << '\n';
+    output << xorv << '\n';
     return 0;
 }

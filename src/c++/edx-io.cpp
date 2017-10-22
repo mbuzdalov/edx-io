@@ -1,7 +1,10 @@
 #include "edx-io.h"
 #include "edx-io.hpp"
+#include <cstdlib>
 
 char string_input_buffer[8192];
+
+edx_io io;
 
 edx_io::edx_io() {
     edx_open();

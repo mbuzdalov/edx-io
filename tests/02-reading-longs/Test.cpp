@@ -2,12 +2,12 @@
 
 int main() {
     int n;
-    long long xor = 0, v;
+    long long xorv = 0, v;
     io >> n;
     for (int i = 0; i < n; ++i) {
         io >> v;
-        xor ^= v;
+        xorv ^= v;
     }
-    io << xor << '\n';
+    io << xorv << '\n';
     return 0;
 }

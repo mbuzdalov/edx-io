@@ -38,17 +38,13 @@ function run_java() {
 }
 
 function run_c_one() {
-    C_FILES=
-    for C_FILE in "${@}"; do
-        C_FILES="$C_FILES $C_FILE.c"
-    done
-    gcc -O3 $C_FILES -lm -o $1.exe
-    echo "        $1.c"
-    time ./$1.exe && echo "          finished: OK" || echo "          finished: FAILED"
+    gcc -O3 "$@" -lm -o compiled_c.exe
+    echo "        $1"
+    time ./compiled_c.exe && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
     ./check answer.txt output.txt
     print_io_sizes
-    rm $1.exe
+    rm compiled_c.exe
 }
 
 function run_c() {
@@ -56,24 +52,20 @@ function run_c() {
     rm -rf edx-io.*
     cp -r ../../src/c/edx-io.* .
     for t in Test*.c; do
-        run_c_one "${t:0:${#t}-2}" "edx-io"
+        run_c_one "$t" "edx-io.c"
     done
     rm -rf edx-io.*
-    run_c_one "Reference"
+    run_c_one "Reference.c"
 }
 
 function run_cpp_one() {
-    CPP_FILES=
-    for CPP_FILE in "${@}"; do
-        CPP_FILES="$CPP_FILES $CPP_FILE.cpp"
-    done
-    g++ -O3 $C_FILES -o $1.exe
-    echo "        $1.cpp"
-    time ./$1.exe && echo "          finished: OK" || echo "          finished: FAILED"
+    g++ -O3 "$@" -o compiled_cpp.exe
+    echo "        $1"
+    time ./compiled_cpp.exe && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
     ./check answer.txt output.txt
     print_io_sizes
-    rm $1.exe
+    rm compiled_cpp.exe
 }
 
 function run_cpp() {
@@ -82,10 +74,10 @@ function run_cpp() {
     cp -r ../../src/c/edx-io.* .
     cp -r ../../src/c++/edx-io.* .
     for t in Test*.cpp; do
-        run_c_one "${t:0:${#t}-4}" "edx-io"
+        run_cpp_one "$t" "edx-io.cpp" "edx-io.c"
     done
     rm -rf edx-io.*
-    run_c_one "Reference"
+    run_cpp_one "Reference.cpp"
 }
 
 function cat_simple_checker() {

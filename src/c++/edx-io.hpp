@@ -25,6 +25,8 @@ struct edx_io {
     edx_io const &operator << (std::string const &) const;
     edx_io const &operator << (char const *) const;
     edx_io const &operator << (char) const;
-} io;
+};
+
+extern edx_io io;
 
 #endif

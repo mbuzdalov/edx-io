@@ -9,7 +9,7 @@ int main() {
     input >> n >> a >> b >> c >> v0 >> v1;
     output << v0 << ' ' << v1;
     output.precision(17);
-    for (i = 2; i < n; ++i) {
+    for (int i = 2; i < n; ++i) {
         v2 = a * v0 + b * v1 + c;
         output << ' ' << (v2 < 0 ? -sqrt(-v2) : sqrt(v2));
         v0 = v1;
