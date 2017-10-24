@@ -28,3 +28,18 @@ Download files:
 * [edx-io.h](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c/edx-io.h)
 * [edx-io.c](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c/edx-io.c)
 
+## Library for C++
+
+This is the library for C++, which is a thin wrapper of the library for C.
+
+[Go to the library](https://github.com/mbuzdalov/edx-io/tree/master/src/c++)
+
+Download files:
+* [edx-io.h](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c/edx-io.h)
+* [edx-io.c](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c/edx-io.c)
+* [edx-io.hpp](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c++/edx-io.hpp)
+* [edx-io.cpp](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c++/edx-io.cpp)
+
+Note: Visual C++ may be misleaded by the co-existing `edx-io.c` and `edx-io.cpp`, which will share the same object name. 
+To make it happy, rename `edx-io.cpp` to `edx-io-plus.cpp`, for instance.
+
