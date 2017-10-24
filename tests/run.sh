@@ -80,6 +80,26 @@ function run_cpp() {
     run_cpp_one "Reference.cpp"
 }
 
+function run_cpython_one() {
+    echo "        $1"
+    time python3 "$@" && echo "          finished: OK" || echo "          finished: FAILED"
+    echo -n "          check:    "
+    ./check answer.txt output.txt
+    print_io_sizes
+    rm -rf __pycache__
+}
+
+function run_cpython() {
+    echo "    CPython:"
+    rm -rf edx_io.*
+    cp -r ../../src/python/* .
+    for t in Test*.py; do
+        run_cpython_one "$t" "edx_io.py"
+    done
+    rm -rf edx_io.*
+    run_cpython_one "Reference.py"
+}
+
 function cat_simple_checker() {
 cat <<SimpleChecker
 #!/bin/bash
@@ -112,6 +132,7 @@ for TEST in $MASK; do
     run_java
     run_c
     run_cpp
+    run_cpython
     rm -f check
     popd > /dev/null
 done
