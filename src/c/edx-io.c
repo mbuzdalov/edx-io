@@ -399,8 +399,8 @@
 
 FILE *ouf = NULL;
 char number_buffer[256];
-int int_to_buffer(int value, int pos);
-int long_long_to_buffer(long long value, int pos);
+int int_to_buffer(unsigned value, int pos);
+int long_long_to_buffer(unsigned long long value, int pos);
 
 void edx_open() {
     edx_open_input();
@@ -443,6 +443,20 @@ void edx_println_char(char value) {
     fputc('\n', ouf);
 }
 
+void edx_print_ui32(unsigned value) {
+#ifdef PRIMITIVES_THROUGH_PRINTF
+    fprintf(ouf, "%u", value);
+#else
+    int pos = int_to_buffer(value, 255);
+    edx_print(number_buffer + pos);
+#endif
+}
+
+void edx_println_ui32(unsigned value) {
+    edx_print_ui32(value);
+    fputc('\n', ouf);
+}
+
 void edx_print_i32(int value) {
 #ifdef PRIMITIVES_THROUGH_PRINTF
     fprintf(ouf, "%d", value);
@@ -454,14 +468,27 @@ void edx_print_i32(int value) {
             edx_print_char('-');
             value = -value;
         }
-        int pos = int_to_buffer(value, 255);
-        edx_print(number_buffer + pos);
+        edx_print_ui32((unsigned) value);
     }
 #endif
 }
 
 void edx_println_i32(int value) {
     edx_print_i32(value);
+    fputc('\n', ouf);
+}
+
+void edx_print_ui64(unsigned long long value) {
+#ifdef PRIMITIVES_THROUGH_PRINTF
+    fprintf(ouf, "%llu", value);
+#else
+    int pos = long_long_to_buffer(value, 255);
+    edx_print(number_buffer + pos);
+#endif
+}
+
+void edx_println_ui64(unsigned long long value) {
+    edx_print_ui64(value);
     fputc('\n', ouf);
 }
 
@@ -476,8 +503,7 @@ void edx_print_i64(long long value) {
             edx_print_char('-');
             value = -value;
         }
-        int pos = long_long_to_buffer(value, 255);
-        edx_print(number_buffer + pos);
+        edx_print_ui64((unsigned long long) value);
     }
 #endif
 }
@@ -522,17 +548,17 @@ char digit_ones[] = {
         48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
 };
 
-int int_to_buffer(int value, int pos) {
+int int_to_buffer(unsigned value, int pos) {
     while (value >= 65536) {
-        int q = value / 100;
-        int r = value - ((q << 6) + (q << 5) + (q << 2));
+        unsigned q = value / 100;
+        unsigned r = value - ((q << 6) + (q << 5) + (q << 2));
         value = q;
         number_buffer[--pos] = digit_ones[r];
         number_buffer[--pos] = digit_tens[r];
     }
     while (1) {
-        int q = (int) ((unsigned) (value * 52429) >> (16+3));
-        int r = value - ((q << 3) + (q << 1));
+        unsigned q = (value * 52429) >> (16 + 3);
+        unsigned r = value - ((q << 3) + (q << 1));
         number_buffer[--pos] = digit_ones[r];
         value = q;
         if (value == 0) {
@@ -542,13 +568,13 @@ int int_to_buffer(int value, int pos) {
     return pos;
 }
 
-int long_long_to_buffer(long long value, int pos) {
+int long_long_to_buffer(unsigned long long value, int pos) {
     while (value > 2147483647LL) {
-        long long q = value / 100;
-        int r = (int) (value - ((q << 6) + (q << 5) + (q << 2)));
+        unsigned long long q = value / 100;
+        unsigned r = (unsigned) (value - ((q << 6) + (q << 5) + (q << 2)));
         value = q;
         number_buffer[--pos] = digit_ones[r];
         number_buffer[--pos] = digit_tens[r];
     }
-    return int_to_buffer((int) value, pos);
+    return int_to_buffer((unsigned) value, pos);
 }

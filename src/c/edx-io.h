@@ -38,6 +38,16 @@ int edx_next_bounded(char *dest, int max_length);
 char *edx_next_unbounded();
 
 /**
+ * Prints the given unsigned int32 value.
+ */
+void edx_print_ui32(unsigned value);
+
+/**
+ * Prints the given unsigned int32 value and puts a newline after it.
+ */
+void edx_println_ui32(unsigned value);
+
+/**
  * Prints the given signed int32 value.
  */
 void edx_print_i32(int value);
@@ -46,6 +56,16 @@ void edx_print_i32(int value);
  * Prints the given signed int32 value and puts a newline after it.
  */
 void edx_println_i32(int value);
+
+/**
+ * Prints the given unsigned int64 value.
+ */
+void edx_print_ui64(unsigned long long value);
+
+/**
+ * Prints the given unsigned int64 value and puts a newline after it.
+ */
+void edx_println_ui64(unsigned long long value);
 
 /**
  * Prints the given signed int64 value.

@@ -57,8 +57,18 @@ edx_io const &edx_io::operator << (int value) const {
     return *this;
 }
 
+edx_io const &edx_io::operator << (unsigned value) const {
+    edx_print_ui32(value);
+    return *this;
+}
+
 edx_io const &edx_io::operator << (long long value) const {
     edx_print_i64(value);
+    return *this;
+}
+
+edx_io const &edx_io::operator << (unsigned long long value) const {
+    edx_print_ui64(value);
     return *this;
 }
 

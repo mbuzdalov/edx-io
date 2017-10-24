@@ -20,7 +20,9 @@ struct edx_io {
     edx_io const &operator >> (char &) const;
     // Output
     edx_io const &operator << (int) const;
+    edx_io const &operator << (unsigned) const;
     edx_io const &operator << (long long) const;
+    edx_io const &operator << (unsigned long long) const;
     edx_io const &operator << (double) const;
     edx_io const &operator << (std::string const &) const;
     edx_io const &operator << (char const *) const;
