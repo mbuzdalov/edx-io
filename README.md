@@ -43,3 +43,11 @@ Download files:
 Note: Visual C++ may be misleaded by the co-existing `edx-io.c` and `edx-io.cpp`, which will share the same object name. 
 To make it happy, rename `edx-io.cpp` to `edx-io-plus.cpp`, for instance.
 
+## Library for CPython and PyPy
+
+This is the library for Python implementations (except Cython).
+
+[Go to the library](https://github.com/mbuzdalov/edx-io/tree/master/src/python)
+
+Download files:
+* [edx_io.py](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/python/edx_io.py)
