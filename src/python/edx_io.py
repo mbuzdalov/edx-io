@@ -1,5 +1,15 @@
 import inspect, io, mmap, platform
 
+def convert_to_bytes(arg):
+    if isinstance(arg, bytes):
+        return arg
+    elif isinstance(arg, str):
+        return arg.encode("ascii")
+    elif hasattr(arg, "__iter__"):
+        return b" ".join(map(convert_to_bytes, arg))
+    else:
+        return str(arg).encode("ascii")
+
 class edx_io:
     def create_tokenizer(self):
         for line in iter(self.mm.readline, b""):
@@ -7,20 +17,26 @@ class edx_io:
                 yield token
 
     def __enter__(self):
-        self.inf = open("input.txt", "rt", 1)
-        self.mm = mmap.mmap(self.inf.fileno(), 0, access = mmap.ACCESS_READ)
-        self.ouf = io.StringIO()
-        self.tokens = self.create_tokenizer()
         self.is_cpython = platform.python_implementation() == "CPython"
+        self.inf = open("input.txt", "rb", 1)
+        self.mm = mmap.mmap(self.inf.fileno(), 0, access = mmap.ACCESS_READ)
+        if self.is_cpython:
+            self.ouf = open("output.txt", "wb", 1)
+        else:
+            self.ouf = io.BytesIO()
+        self.tokens = self.create_tokenizer()
         return self
 
     def __exit__(self, type, value, traceback):
         self.mm.close()
         self.inf.close()
-        ouf = open("output.txt", "wt", 1)
-        ouf.write(self.ouf.getvalue())
-        ouf.close()
-        self.ouf.close()
+        if self.is_cpython:
+            self.ouf.close()
+        else:
+            ouf = open("output.txt", "wb", 1)
+            ouf.write(self.ouf.getvalue())
+            ouf.close()
+            self.ouf.close()
 
     def next_int(self):
         return int(self.next_token())
@@ -35,22 +51,8 @@ class edx_io:
         return self.tokens
 
     def write(self, arg):
-        if isinstance(arg, str):
-            self.ouf.write(arg)
-        elif isinstance(arg, bytes):
-            self.ouf.write(arg.decode())
-        elif hasattr(arg, "__iter__"):
-            if self.is_cpython:
-                self.ouf.write(" ".join(str(i) for i in arg))
-            else:
-                sep = ""
-                for i in arg:
-                    self.ouf.write(sep)
-                    self.ouf.write(str(i))
-                    sep = " "
-        else:
-            self.ouf.write(str(arg))
+        self.ouf.write(convert_to_bytes(arg))
 
     def writeln(self, arg):
         self.write(arg)
-        self.write("\n")
+        self.ouf.write(b"\n")
