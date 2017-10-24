@@ -19,10 +19,14 @@ the number of characters read. If the token exceeds the maximum length, the rest
 
 ## High-level output
 
+* `void edx_print_ui32(unsigned)` -- writes an `unsigned int`.
+* `void edx_println_ui32(unsigned)` -- writes an `unsigned int` and puts a newline.
 * `void edx_print_i32(int)` -- writes an `int`.
 * `void edx_println_i32(int)` -- writes an `int` and puts a newline.
 * `void edx_print_i64(long long)` -- writes a `long long`.
 * `void edx_println_i64(long long)` -- writes a `long long` and puts a newline.
+* `void edx_print_ui64(unsigned long long)` -- writes an `unsigned long long`.
+* `void edx_println_ui64(unsigned long long)` -- writes a `unsigned long long` and puts a newline.
 * `void edx_print_i64(double)` -- writes a `double`.
 * `void edx_println_i64(double)` -- writes a `double` and puts a newline.
 * `void edx_print_i64(char)` -- writes a `char`.
