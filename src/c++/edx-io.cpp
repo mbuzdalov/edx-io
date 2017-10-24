@@ -5,13 +5,18 @@
 char string_input_buffer[8192];
 
 edx_io io;
+int instance_count = 0;
 
 edx_io::edx_io() {
-    edx_open();
+    if (!instance_count++) {
+        edx_open();
+    }
 }
 
 edx_io::~edx_io() {
-    edx_close();
+    if (!--instance_count) {
+        edx_close();
+    }
 }
 
 // Input
