@@ -7,6 +7,7 @@ if [[ "$1" == "clean" ]]; then
 fi
 
 TIMEFORMAT="          time:     %U"
+CFLAGS="-Wall -Wextra -pedantic -Wno-long-long -O3"
 
 function print_io_sizes() {
     echo -n "          input:    "
@@ -38,7 +39,7 @@ function run_java() {
 }
 
 function run_c_one() {
-    gcc -O3 "$@" -lm -o compiled_c.exe
+    gcc $CFLAGS "$@" -lm -o compiled_c.exe
     echo "        $1"
     time ./compiled_c.exe && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
@@ -59,7 +60,7 @@ function run_c() {
 }
 
 function run_cpp_one() {
-    g++ -O3 "$@" -o compiled_cpp.exe
+    g++ -std=gnu++14 $CFLAGS "$@" -o compiled_cpp.exe
     echo "        $1"
     time ./compiled_cpp.exe && echo "          finished: OK" || echo "          finished: FAILED"
     echo -n "          check:    "
@@ -132,7 +133,7 @@ for TEST in $MASK; do
     run_java
     run_c
     run_cpp
-    run_cpython
+#    run_cpython   # not all tests are now implemented
     rm -f check
     popd > /dev/null
 done

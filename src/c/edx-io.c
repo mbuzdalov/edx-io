@@ -179,7 +179,7 @@
         return is_negative ? add <= 8 : add < 8;
     }
 
-    int i64_impl_safe(int value, int add, int is_negative) {
+    int i64_impl_safe(long long value, int add, int is_negative) {
         if (value < 922337203685477580LL) {
             return 1;
         }
