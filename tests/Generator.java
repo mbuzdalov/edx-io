@@ -113,7 +113,7 @@ public class Generator {
             return;
         }
         int a = 7823875, b = 761246357, c = 81387543;
-        int v0 = 723528643, v1 = -235745654;
+        int v0 = 723528643, v1 = Integer.MIN_VALUE;
         try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             inf.println(a + " " + b + " " + c);
@@ -141,7 +141,7 @@ public class Generator {
             return;
         }
         long a = 11357823875L, b = -3576124635755L, c = 81387543;
-        long v0 = 723528643189235L, v1 = -235745654346322L;
+        long v0 = 723528643189235L, v1 = Long.MIN_VALUE;
         try (PrintWriter inf = new PrintWriter(inFile)) {
             inf.println(n);
             inf.println(a + " " + b + " " + c);

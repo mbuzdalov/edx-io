@@ -134,7 +134,6 @@
 
     char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed) {
         char *rv;
-        int size;
         skip_whitespace();
         rv = mmap_ptr;
         while (mmap_ptr < mmap_end && *mmap_ptr > ' ') {
@@ -461,7 +460,7 @@ void edx_print_i32(int value) {
 #ifdef PRIMITIVES_THROUGH_PRINTF
     fprintf(ouf, "%d", value);
 #else
-    if (value == -2147483648) {
+    if (value && value == -value) {
         edx_print("-2147483648");
     } else {
         if (value < 0) {
@@ -496,7 +495,7 @@ void edx_print_i64(long long value) {
 #ifdef PRIMITIVES_THROUGH_PRINTF
     fprintf(ouf, "%lld", value);
 #else
-    if (value == 1LL << 63) {
+    if (value && value == -value) {
         edx_print("-9223372036854775808");
     } else {
         if (value < 0) {

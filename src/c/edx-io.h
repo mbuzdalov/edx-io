@@ -1,5 +1,7 @@
 #ifndef __EDX_IO_H__
 #define __EDX_IO_H__
+#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_DEPRECATE
 
 /**
  * Initializes the library. Should be called before all other functions.
