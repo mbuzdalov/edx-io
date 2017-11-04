@@ -197,8 +197,8 @@
             is_negative = 1;
             ++mmap_ptr;
         }
-        while (mmap_ptr < mmap_end) {
-            symbol = *mmap_ptr;
+        while (mmap_ptr <= mmap_end) {
+            symbol = mmap_ptr < mmap_end ? *mmap_ptr : '\0';
             if ('0' <= symbol && symbol <= '9') {
                 ++count_digits;
                 ++mmap_ptr;
@@ -230,8 +230,8 @@
             is_negative = 1;
             ++mmap_ptr;
         }
-        while (mmap_ptr < mmap_end) {
-            symbol = *mmap_ptr;
+        while (mmap_ptr <= mmap_end) {
+            symbol = mmap_ptr < mmap_end ? *mmap_ptr : '\0';
             if ('0' <= symbol && symbol <= '9') {
                 ++count_digits;
                 ++mmap_ptr;
