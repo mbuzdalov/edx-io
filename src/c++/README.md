@@ -7,6 +7,9 @@ This library is a thin wrapper around the C library, so you need to also downloa
 * [edx-io.h](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c/edx-io.h)
 * [edx-io.c](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/c/edx-io.c)
 
+**Note for Visual C++ users:** you may need to change all files with `*.c` extensions to `*.cpp` extensions, and make sure you have different
+names for both `*.cpp` files: for example, `edx-io.cpp` and `edx-io-plus.cpp`.
+
 ## Globals
 
 * `struct edx_io` -- a class containing a constructor (which opens the files), a destructor (which closes them), and the following methods:
