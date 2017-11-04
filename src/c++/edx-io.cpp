@@ -38,7 +38,7 @@ edx_io const &edx_io::operator >> (double &value) const {
 
 edx_io const &edx_io::operator >> (std::string &value) const {
     value.resize(0);
-    int length;
+    size_t length;
     int must_be_freed;
     char *str = edx_unsafe_read_token(&length, NULL, &must_be_freed);
     value.append(str, length);

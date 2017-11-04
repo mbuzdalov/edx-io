@@ -3,6 +3,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_DEPRECATE
 
+#include <stddef.h>
+
 /**
  * Initializes the library. Should be called before all other functions.
  */
@@ -133,6 +135,6 @@ int edx_printf(char const *fmt_string, ...);
  *
  * All arguments may be NULL, in which case the value is not filled.
  */
-char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed);
+char *edx_unsafe_read_token(size_t *length, int *ends_with_zero, int *must_be_freed);
 
 #endif

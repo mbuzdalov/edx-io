@@ -1,10 +1,10 @@
+#include "edx-io.h"
+
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "edx-io.h"
 
 #define INPUT_FILE_NAME "input.txt"
 #define OUTPUT_FILE_NAME "output.txt"
@@ -125,14 +125,14 @@
         }
     }
 
-    char *copy_string_contents(char const *source, int length) {
+    char *copy_string_contents(char const *source, size_t length) {
         char *rv = (char*) (malloc(sizeof(char) * (length + 1)));
         memcpy(rv, source, sizeof(char) * length);
         rv[length] = 0;
         return rv;
     }
 
-    char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed) {
+    char *edx_unsafe_read_token(size_t *length, int *ends_with_zero, int *must_be_freed) {
         char *rv;
         skip_whitespace();
         rv = mmap_ptr;
@@ -150,7 +150,7 @@
         return rv;
     }
 
-    char *consume_token(int *copy_was_made, int *length) {
+    char *consume_token(int *copy_was_made, size_t *length) {
         int ends_with_zero;
         char *rv = edx_unsafe_read_token(length, &ends_with_zero, NULL);
         if (ends_with_zero) {
@@ -280,7 +280,7 @@
 
     char *edx_next_unbounded() {
         int copy_was_made;
-        int length;
+        size_t length;
         char *token = consume_token(&copy_was_made, &length);
         if (copy_was_made) {
             return token;
@@ -387,7 +387,7 @@
         }
     }
 
-    char *edx_unsafe_read_token(int *length, int *ends_with_zero, int *must_be_freed) {
+    char *edx_unsafe_read_token(size_t *length, int *ends_with_zero, int *must_be_freed) {
         char *rv = edx_next_unbounded();
         if (length)         *length = strlen(rv);
         if (ends_with_zero) *ends_with_zero = 1;
