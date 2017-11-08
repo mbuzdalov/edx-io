@@ -18,7 +18,7 @@ int main() {
     for (i = 2; i < n; ++i) {
         v2 = a * v0 + b * v1 + c;
         edx_print_char(' ');
-        edx_print_double(v2 < 0 ? -sqrt(-v2) : sqrt(v2));
+        edx_print_double(v2 < 0 ? -sqrt((double) (-v2)) : sqrt((double) (v2)));
         v0 = v1;
         v1 = v2;
     }

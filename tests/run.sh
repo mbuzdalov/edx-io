@@ -7,7 +7,7 @@ if [[ "$1" == "clean" ]]; then
 fi
 
 TIMEFORMAT="          time:     %U"
-CFLAGS="-Wall -Wextra -pedantic -Wno-long-long -O3"
+CFLAGS="-Wall -Wconversion -Wparentheses -Wextra -Wpedantic -Wno-long-long -O3"
 
 function print_io_sizes() {
     echo -n "          input:    "

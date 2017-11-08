@@ -97,7 +97,8 @@
             if (input_file_descriptor != -1) {
                 struct stat fstat_buffer;
                 if (fstat(input_file_descriptor, &fstat_buffer) != -1) {
-                    int mmap_size = fstat_buffer.st_size;
+                    // st_size is off_t actually. off_t is signed, however, it's a file size.
+                    size_t mmap_size = (size_t) fstat_buffer.st_size;
                     mmap_buf = (char*) (mmap(NULL, mmap_size, PROT_READ | PROT_WRITE, MAP_PRIVATE,
                             input_file_descriptor, 0));
                     if (mmap_buf != MAP_FAILED) {
@@ -114,7 +115,7 @@
         }
 
         void edx_close_input() {
-            munmap(mmap_buf, mmap_end - mmap_buf);
+            munmap(mmap_buf, (size_t) (mmap_end - mmap_buf));
             close(input_file_descriptor);
         }
     #endif
@@ -139,7 +140,7 @@
         while (mmap_ptr < mmap_end && *mmap_ptr > ' ') {
             ++mmap_ptr;
         }
-        if (length) *length = mmap_ptr - rv;
+        if (length) *length = (size_t) (mmap_ptr - rv);
         if (must_be_freed) *must_be_freed = 0;
         if (!CAN_WRITE_TO_PAGES || mmap_ptr == mmap_end) {
             if (ends_with_zero) *ends_with_zero = 0;

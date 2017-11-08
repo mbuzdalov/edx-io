@@ -12,7 +12,7 @@ int main() {
     fprintf(output, "%lld %lld", v0, v1);
     for (i = 2; i < n; ++i) {
         v2 = a * v0 + b * v1 + c;
-        fprintf(output, " %.17lg", v2 < 0 ? -sqrt(-v2) : sqrt(v2));
+        fprintf(output, " %.17lg", v2 < 0 ? -sqrt((double) (-v2)) : sqrt((double) (v2)));
         v0 = v1;
         v1 = v2;
     }
