@@ -1,4 +1,4 @@
-import inspect, io, mmap, platform
+import inspect, io, mmap
 
 def convert_to_bytes(arg):
     if isinstance(arg, bytes):
@@ -17,26 +17,19 @@ class edx_io:
                 yield token
 
     def __enter__(self):
-        self.is_cpython = platform.python_implementation() == "CPython"
         self.inf = open("input.txt", "rb", 1)
         self.mm = mmap.mmap(self.inf.fileno(), 0, access = mmap.ACCESS_READ)
-        if self.is_cpython:
-            self.ouf = open("output.txt", "wb", 1)
-        else:
-            self.ouf = io.BytesIO()
+        self.ouf = io.BytesIO()
         self.tokens = self.create_tokenizer()
         return self
 
     def __exit__(self, type, value, traceback):
         self.mm.close()
         self.inf.close()
-        if self.is_cpython:
-            self.ouf.close()
-        else:
-            ouf = open("output.txt", "wb", 1)
-            ouf.write(self.ouf.getvalue())
-            ouf.close()
-            self.ouf.close()
+        ouf = open("output.txt", "wb", 1)
+        ouf.write(self.ouf.getvalue())
+        ouf.close()
+        self.ouf.close()
 
     def next_int(self):
         return int(self.next_token())
