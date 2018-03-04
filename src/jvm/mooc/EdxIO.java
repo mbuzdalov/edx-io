@@ -112,6 +112,7 @@ public class EdxIO implements Closeable {
         byte[] bytes = new byte[finish - start];
         inputBuffer.position(start);
         inputBuffer.get(bytes);
+        inputPosition = finish;
         return bytes;
     }
 
