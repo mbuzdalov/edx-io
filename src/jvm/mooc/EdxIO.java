@@ -85,6 +85,37 @@ public class EdxIO implements Closeable {
     }
 
     /**
+     * Reads from the input file and returns the next non-whitespace token, stored as an array of bytes.
+     *
+     * This will:
+     * <ul>
+     * <li>skip all whitespace until the next non-whitespace symbol;</li>
+     * <li>consume all non-whitespace symbols until the next whitespace symbol;</li>
+     * <li>return the consumed symbols as an array of bytes.</li>
+     * </ul>
+     *
+     * When the operation succeeds, the stream pointer for the input file points to the next
+     * symbol after the last symbol of the consumed token.
+     *
+     * @return the next non-whitespace token stored as an array of bytes.
+     */
+    public byte[] nextBytes() {
+        skipWhiteSpace();
+        int start = inputPosition;
+        if (start >= inputCapacity) {
+            return null;
+        }
+        int finish = start;
+        while (finish < inputCapacity && inputBuffer.get(finish) > 32) {
+            ++finish;
+        }
+        byte[] bytes = new byte[finish - start];
+        inputBuffer.position(start);
+        inputBuffer.get(bytes);
+        return bytes;
+    }
+
+    /**
      * Reads from the input file and returns the next non-whitespace character.
      *
      * This will:
