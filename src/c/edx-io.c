@@ -401,19 +401,24 @@ FILE *ouf = NULL;
 char number_buffer[256];
 int int_to_buffer(unsigned value, int pos);
 int long_long_to_buffer(unsigned long long value, int pos);
+int number_opened = 0;
 
 void edx_open() {
-    edx_open_input();
-    ouf = fopen(OUTPUT_FILE_NAME, "wt");
-    if (ouf == NULL) {
-        perror(OUTPUT_FILE_OPEN_ERROR);
-        exit(1);
+    if (++number_opened == 1) {
+        edx_open_input();
+        ouf = fopen(OUTPUT_FILE_NAME, "wt");
+        if (ouf == NULL) {
+            perror(OUTPUT_FILE_OPEN_ERROR);
+            exit(1);
+        }
     }
 }
 
 void edx_close() {
-    edx_close_input();
-    fclose(ouf);
+    if (--number_opened == 0) {
+        edx_close_input();
+        fclose(ouf);
+    }
 }
 
 int edx_printf(char const *fmt_string, ...) {
