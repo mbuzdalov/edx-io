@@ -257,7 +257,8 @@
 
     double edx_next_double() {
         int copy_was_made;
-        char *token = consume_token(&copy_was_made, NULL);
+        size_t length;
+        char *token = consume_token(&copy_was_made, &length);
         double rv = atof(token);
         check_erange("Error while running edx_next_double");
         if (copy_was_made) {
