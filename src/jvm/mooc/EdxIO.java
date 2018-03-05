@@ -41,11 +41,71 @@ public class EdxIO implements Closeable {
         /**
          * This is what will become the public-static-void-main
          * when this class is extended by a Scala object containing the solution.
+         *
+         * @param args the program's arguments, which are unused.
          */
         public final void main(String[] args) {
             try (EdxIO io = EdxIO.create()) {
                 receive(io);
             }
+        }
+
+        /**
+         * A convenience method for the Scala solutions to create a new Array[Byte]
+         * without having to load the Scala library.
+         *
+         * @param n the number of elements.
+         * @return the new array of bytes of length n.
+         */
+        public byte[] newByteArray(int n) {
+            return new byte[n];
+        }
+
+        /**
+         * A convenience method for the Scala solutions to create a new Array[Int]
+         * without having to load the Scala library.
+         *
+         * @param n the number of elements.
+         * @return the new array of ints of length n.
+         */
+        public int[] newIntArray(int n) {
+            return new int[n];
+        }
+
+        /**
+         * A convenience method for the Scala solutions to create a new Array[Long]
+         * without having to load the Scala library.
+         *
+         * @param n the number of elements.
+         * @return the new array of longs of length n.
+         */
+        public long[] newLongArray(int n) {
+            return new long[n];
+        }
+
+        /**
+         * A convenience method for the Scala solutions to create a new Array[Double]
+         * without having to load the Scala library.
+         *
+         * @param n the number of elements.
+         * @return the new array of doubles of length n.
+         */
+        public double[] newDoubleArray(int n) {
+            return new double[n];
+        }
+
+        /**
+         * A convenience method for the Scala solutions to create a new Array[T]
+         * for a reference type T without having to load the Scala library.
+         *
+         * @param <T> the type of an element.
+         * @param clazz the class representing the type of an element.
+         * @param n the number of elements.
+         * @return the new array of length n.
+         */
+        @SuppressWarnings("unchecked")
+        public <T> T[] newReferenceArray(Class<T> clazz, int n) {
+            return (T[]) java.lang.reflect.Array.newInstance(clazz, n);
         }
     }
 
@@ -218,15 +278,15 @@ public class EdxIO implements Closeable {
 
     /**
      * Reads from the input file and returns the next double.
-     * Internally, {@link Double.parseDouble(String)} is used.
-     * This is slow, as {@link String}s and {@code Matcher}s are involved.
-     * To read doubles faster, but in a not so conformant way, use {@link nextDoubleFast()}.
+     * Internally, {@link Double#parseDouble(String)} is used.
+     * This is slow, as {@link String}s and {@link java.util.regex.Matcher}s are involved.
+     * To read doubles faster, but in a not so conformant way, use {@link #nextDoubleFast()}.
      *
      * This will:
      * <ul>
      * <li>skip all whitespace until the next non-whitespace symbol;</li>
      * <li>consume all non-whitespace symbols until the next whitespace symbol;</li>
-     * <li>invoke {@link Double.parseDouble(String)} on the resulting character sequence and return the result.</li>
+     * <li>invoke {@link Double#parseDouble(String)} on the resulting character sequence and return the result.</li>
      * </ul>
      *
      * Regardless of whether double parsing is successful, the stream pointer for the input file points to the first
@@ -250,8 +310,8 @@ public class EdxIO implements Closeable {
 
     /**
      * Reads from the input file and returns the next double.
-     * This is a custom implementation which is not guaranteed to read all doubles {@link nextDoublePrecise()} does,
-     * nor guaranteed to return the same values as {@link nextDoublePrecise()} does on the same input.
+     * This is a custom implementation which is not guaranteed to read all doubles {@link #nextDoublePrecise()} does,
+     * nor guaranteed to return the same values as {@link #nextDoublePrecise()} does on the same input.
      * However, it is very fast.
      *
      * This will:
@@ -265,7 +325,7 @@ public class EdxIO implements Closeable {
      * </ul>
      *
      * The state of the stream after returning from this function depends on the input as if exactly the same sequence as above
-     * is executed, see {@link nextLong()}.
+     * is executed, see {@link #nextLong()}.
      *
      * @return the double value which has just been read from the input file.
      */
