@@ -24,6 +24,7 @@ If you wish, you may extend `Receiver` by your `object`, which then inherits the
 * `double nextDoublePrecise()` -- reads a `double` using `Double.parseDouble` internally, which guarantees that all standard representation of `double` can be read.
 * `double nextDoubleFast()` -- reads a `double` in a less compliant way, but maybe three times faster.
 * `String next()` -- reads a non-whitespace token and returns it as a `String`.
+* `byte[] nextBytes()` -- reads a non-whitespace token and retursn is as an array of `byte`. This is faster than `String next()`.
 
 ## Low-level input
 
