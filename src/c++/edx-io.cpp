@@ -26,6 +26,15 @@ edx_io const &edx_io::operator >> (int &value) const {
     return *this;
 }
 
+edx_io const &edx_io::operator >> (long &value) const {
+#if ULONG_MAX == 4294967295
+    value = edx_next_i32();
+#else
+    value = edx_next_i64();
+#endif
+    return *this;
+}
+
 edx_io const &edx_io::operator >> (long long &value) const {
     value = edx_next_i64();
     return *this;

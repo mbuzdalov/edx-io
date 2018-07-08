@@ -14,6 +14,7 @@ struct edx_io {
     ~edx_io();
     // Input
     edx_io const &operator >> (int &) const;
+    edx_io const &operator >> (long &) const;
     edx_io const &operator >> (long long &) const;
     edx_io const &operator >> (double &) const;
     edx_io const &operator >> (std::string &) const;
