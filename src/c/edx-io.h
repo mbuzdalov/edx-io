@@ -5,6 +5,10 @@
 
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Initializes the library. Should be called before all other functions.
  */
@@ -136,5 +140,9 @@ int edx_printf(char const *fmt_string, ...);
  * All arguments may be NULL, in which case the value is not filled.
  */
 char *edx_unsafe_read_token(size_t *length, int *ends_with_zero, int *must_be_freed);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
