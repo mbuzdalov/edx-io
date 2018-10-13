@@ -193,9 +193,7 @@ public class EdxIO implements Closeable {
         if (inputPosition >= inputCapacity) {
             throw new IllegalStateException("Unexpected end-of-file");
         }
-        char rv = (char) currentSymbol();
-        ++inputPosition;
-        return rv;
+        return (char) inputBuffer.get(inputPosition++);
     }
 
     /**
@@ -219,11 +217,7 @@ public class EdxIO implements Closeable {
      */
     public int nextInt() {
         skipWhiteSpace();
-        boolean isNegative = false;
-        if (currentSymbol() == '-') {
-            isNegative = true;
-            ++inputPosition;
-        }
+        boolean isNegative = readSignReturnIfNegative();
         boolean hasDigits = false;
         int value = 0;
         while (true) {
@@ -268,11 +262,7 @@ public class EdxIO implements Closeable {
      */
     public long nextLong() {
         skipWhiteSpace();
-        boolean isNegative = false;
-        if (currentSymbol() == '-') {
-            isNegative = true;
-            ++inputPosition;
-        }
+        boolean isNegative = readSignReturnIfNegative();
         return nextLongImpl(isNegative);
     }
 
@@ -331,11 +321,7 @@ public class EdxIO implements Closeable {
      */
     public double nextDoubleFast() {
         skipWhiteSpace();
-        boolean isNegative = false;
-        if (currentSymbol() == '-') {
-            isNegative = true;
-            ++inputPosition;
-        }
+        boolean isNegative = readSignReturnIfNegative();
         long first = nextLongImpl(isNegative);
         if (currentSymbol() == '.') {
             int startPosition = ++inputPosition;
@@ -607,7 +593,20 @@ public class EdxIO implements Closeable {
 
     /*-************************* Implementation of nextInt *************************-*/
 
-    private boolean nextIntImplIsSafe(int value, int add, boolean isNegative) {
+    private boolean readSignReturnIfNegative() {
+        byte curr = currentSymbol();
+        switch (curr) {
+            case '-':
+                ++inputPosition;
+                return true;
+            case '+':
+                ++inputPosition;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean nextIntImplIsSafe(int value, int add, boolean isNegative) {
         if (value < 214748364) {
             return true;
         }
@@ -641,7 +640,7 @@ public class EdxIO implements Closeable {
         }
     }
 
-    private boolean nextLongImplIsSafe(long value, int add, boolean isNegative) {
+    private static boolean nextLongImplIsSafe(long value, int add, boolean isNegative) {
         if (value < 922337203685477580L) {
             return true;
         }
