@@ -388,9 +388,9 @@ public class EdxIO implements Closeable {
         }
         int diff = inputCapacity - inputPosition;
         if (diff > nSymbols) {
-            inputCapacity += nSymbols;
+            inputPosition += nSymbols;
         } else {
-            inputCapacity = inputPosition;
+            inputPosition = inputCapacity;
         }
     }
 
