@@ -31,13 +31,13 @@
 
         void print_windows_error_and_exit() {
             DWORD err = GetLastError();
-            LPTSTR msg;
-            DWORD symbol_cnt = FormatMessage(
+            LPSTR msg;
+            DWORD symbol_cnt = FormatMessageA(
                 FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,
                 0, // the optional message
                 err,
                 0, // the language: 0 means "guess on your own"
-                (LPTSTR) &msg,
+                (LPSTR) &msg,
                 0, // nSize which is ignored
                 NULL // varargs which are not used
             );
@@ -207,17 +207,17 @@
                 if (i32_impl_safe(value, add, is_negative)) {
                     value = value * 10 + add;
                 } else {
-                    fputs("[edx_next_i32] number too large", stderr);
+                    fputs("[edx_next_i32] number too large\n", stderr);
                 }
             } else {
                 if (count_digits == 0) {
-                    fputs("[edx_next_i32] incomplete number", stderr);
+                    fputs("[edx_next_i32] incomplete number\n", stderr);
                 } else {
                     return is_negative ? -value : value;
                 }
             }
         }
-        fputs("[edx_next_i32] Unexpected end-of-file", stderr);
+        fputs("[edx_next_i32] Unexpected end-of-file\n", stderr);
         exit(1);
         return 0;
     }
@@ -240,17 +240,17 @@
                 if (i64_impl_safe(value, add, is_negative)) {
                     value = value * 10 + add;
                 } else {
-                    fputs("[edx_next_i64] number too large", stderr);
+                    fputs("[edx_next_i64] number too large\n", stderr);
                 }
             } else {
                 if (count_digits == 0) {
-                    fputs("[edx_next_i64] incomplete number", stderr);
+                    fputs("[edx_next_i64] incomplete number\n", stderr);
                 } else {
                     return is_negative ? -value : value;
                 }
             }
         }
-        fputs("[edx_next_i64] Unexpected end-of-file", stderr);
+        fputs("[edx_next_i64] Unexpected end-of-file\n", stderr);
         exit(1);
         return 0;
     }
