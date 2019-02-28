@@ -53,9 +53,11 @@ public class EdxIO implements Closeable {
          * A convenience method for the Scala solutions to create a new Array[Byte]
          * without having to load the Scala library.
          *
+         * @deprecated use the {@code new Array[Byte]} syntax which also does not load the Scala library.
          * @param n the number of elements.
          * @return the new array of bytes of length n.
          */
+        @Deprecated
         public byte[] newByteArray(int n) {
             return new byte[n];
         }
@@ -64,9 +66,11 @@ public class EdxIO implements Closeable {
          * A convenience method for the Scala solutions to create a new Array[Int]
          * without having to load the Scala library.
          *
+         * @deprecated use the {@code new Array[Int]} syntax which also does not load the Scala library.
          * @param n the number of elements.
          * @return the new array of ints of length n.
          */
+        @Deprecated
         public int[] newIntArray(int n) {
             return new int[n];
         }
@@ -75,9 +79,11 @@ public class EdxIO implements Closeable {
          * A convenience method for the Scala solutions to create a new Array[Long]
          * without having to load the Scala library.
          *
+         * @deprecated use the {@code new Array[Long]} syntax which also does not load the Scala library.
          * @param n the number of elements.
          * @return the new array of longs of length n.
          */
+        @Deprecated
         public long[] newLongArray(int n) {
             return new long[n];
         }
@@ -86,9 +92,11 @@ public class EdxIO implements Closeable {
          * A convenience method for the Scala solutions to create a new Array[Double]
          * without having to load the Scala library.
          *
+         * @deprecated use the {@code new Array[Double]} syntax which also does not load the Scala library.
          * @param n the number of elements.
          * @return the new array of doubles of length n.
          */
+        @Deprecated
         public double[] newDoubleArray(int n) {
             return new double[n];
         }
@@ -97,11 +105,13 @@ public class EdxIO implements Closeable {
          * A convenience method for the Scala solutions to create a new Array[T]
          * for a reference type T without having to load the Scala library.
          *
+         * @deprecated use the {@code new Array[T]} syntax which also does not load the Scala library.
          * @param <T> the type of an element.
          * @param clazz the class representing the type of an element.
          * @param n the number of elements.
          * @return the new array of length n.
          */
+        @Deprecated
         @SuppressWarnings("unchecked")
         public <T> T[] newReferenceArray(Class<T> clazz, int n) {
             return (T[]) java.lang.reflect.Array.newInstance(clazz, n);
