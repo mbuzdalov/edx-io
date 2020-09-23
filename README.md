@@ -52,3 +52,12 @@ This is the library for Python implementations (except Cython).
 
 Download files:
 * [edx_io.py](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/python/edx_io.py)
+
+## Library for JavaScript
+
+This is the library for JavaScript.
+
+[Go to the library](https://github.com/mbuzdalov/edx-io/tree/master/src/js)
+
+Download files:
+* [EdxIo.js](https://raw.githubusercontent.com/mbuzdalov/edx-io/master/src/js/EdxIo.js)
